@@ -1,0 +1,14 @@
+# Intentionally untracked files to ignore. See gitignore(5).
+
+.DS_Store
+*.bak
+*.new
+*~
+/.cache
+/.venv
+/ansible_galaxy/ansible_collections/
+/ansible_galaxy/ansible_roles/
+/bin/a
+/bin/ap
+/bin/aps
+/dist/

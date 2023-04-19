@@ -1,0 +1,32 @@
+---
+namespace: alexbarton
+name: boilerplate
+# NOTE: Remove "galaxy[version-incorrect]" from the "skip_list" in
+# .ansible-lint once you bump the version to 1.0.0 (or higher)!
+version: 0.0.1
+
+authors:
+  - Alexander Barton <alex@barton.de>
+
+description: Collection of boilerplate files, plays, roles and scripts for projects using Ansible.
+readme: README.md
+
+license_file: LICENSE
+
+tags:
+  - boilerplate
+  - common
+  - tools
+
+dependencies:
+  "community.general": ">=6.1.0"
+
+homepage: https://github.com/alexbarton/ansible-collection-boilerplate
+documentation: https://github.com/alexbarton/ansible-collection-boilerplate
+issues: https://github.com/alexbarton/ansible-collection-boilerplate/issues
+repository: https://github.com/alexbarton/ansible-collection-boilerplate
+
+build_ignore:
+  - .DS_Store
+  - .trunk
+  - .venv

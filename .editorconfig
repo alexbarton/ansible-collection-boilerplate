@@ -1,0 +1,33 @@
+# .editorconfig: Editor settings, see <https://editorconfig.org>.
+
+# top-most EditorConfig file
+root = true
+
+# Defaults for all file types:
+
+[*]
+# Use UTF-8 encoding.
+charset = utf-8
+# Unix-style newlines.
+end_of_line = lf
+# Files should end with a newline.
+insert_final_newline = true
+# Remove whitespace characters preceding newline characters.
+trim_trailing_whitespace = true
+
+# File type specific settings follow:
+
+[{bin/*,Makefile*,*.sh}]
+# Tab indentation (8 characters wide).
+indent_style = tab
+indent_size = 8
+
+[*.{json,md}]
+# 4 space indentation.
+indent_style = space
+indent_size = 4
+
+[*.{yaml,yml}]
+# 2 space indentation.
+indent_style = space
+indent_size = 2

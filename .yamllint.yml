@@ -1,0 +1,16 @@
+---
+# yamllint configuration.
+# See <https://yamllint.readthedocs.io/en/stable/configuration.html>.
+
+extends: default
+
+rules:
+  line-length:
+    max: 100
+    level: warning
+
+ignore: |
+  .trunk/
+  .venv/
+  ansible_galaxy/ansible_collections/
+  ansible_galaxy/ansible_roles/

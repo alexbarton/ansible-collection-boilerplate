@@ -1,0 +1,67 @@
+#
+# Ansible Boilerplate Collection: Makefile for inclusion into projects using it.
+#
+
+PYTHON ?= python3
+SOURCE_ROOT ?= $(CURDIR)
+VENV_D = $(SOURCE_ROOT)/.venv
+VENV_BIN = $(VENV_D)/bin
+
+this_makefile_path:=$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
+this_dir:=$(shell cd $(dir $(this_makefile_path));pwd)
+
+check-ansible: $(VENV_BIN)/ansible-lint
+#	Check Ansible executable ...
+	"$(VENV_BIN)"/ansible --version
+#	Check YAML files ...
+	"$(VENV_BIN)"/yamllint .
+#	Run ansible-playbook syntax check, when a "site play" is found ...
+ifneq ("$(wildcard playbooks/site.yml)","")
+	"$(VENV_BIN)"/ansible-playbook --syntax-check playbooks/site.yml
+endif
+ifneq ("$(wildcard site.yml)","")
+	"$(VENV_BIN)"/ansible-playbook --syntax-check site.yml
+endif
+#	Run ansible-lint ...
+	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
+
+distclean-ansible:
+#	Remove Python "virtual environment" ...
+	rm -fr "$(SOURCE_ROOT)"/.venv
+#	Remove Ansible Galaxy collections and roles
+	rm -fr "$(SOURCE_ROOT)"/ansible_galaxy/ansible_collections "$(SOURCE_ROOT)"/ansible_galaxy/ansible_roles
+#	Remove cache directory, used by the Ansible "facts cache" for example ...
+	rm -fr "$(SOURCE_ROOT)"/.cache
+#	Clean up symlinked commands in dependant projects ...
+	for cmd in "$(SOURCE_ROOT)"/bin/a "$(SOURCE_ROOT)"/bin/ap "$(SOURCE_ROOT)"/bin/aps; do \
+	  test -h "$$cmd" && rm -f "$$cmd" || true; \
+	 done
+
+$(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(VENV_BIN)/pip
+#	Install/upgrade Python package manager
+	"$(VENV_BIN)"/pip install --upgrade pip wheel
+	touch "$(VENV_BIN)/pip" "$(VENV_BIN)/wheel"
+#	Install/upgrade Python dependencies ...
+	"$(VENV_BIN)"/pip install --upgrade --requirement $(this_dir)/requirements.txt
+	touch "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
+
+$(VENV_BIN)/pip:
+#	Create/upgrade Python "virtual environment"
+	"$(PYTHON)" -m venv "$(SOURCE_ROOT)"/.venv
+
+.PHONY: venv
+
+ifneq ($(patsubst %..,,$(lastword $(SOURCE_ROOT))),)
+# SOURCE_ROOT does not end in "..", so looks like this Makefile fragment is
+# included in the top-level Makefile. So add some proprietary targets to the
+# "common" toplevel targets:
+
+all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
+check: check-ansible
+distclean: distclean-ansible
+
+upgrade: $(SOURCE_ROOT)/bin/ansible-boilerplate
+	$(SOURCE_ROOT)/bin/ansible-boilerplate upgrade
+
+.PHONY: check distclean
+endif

@@ -1,0 +1,290 @@
+#!/bin/sh -e
+#
+# Ansible Boilerplate Collection: Setup & Maintenance Script.
+#
+
+# Detect commands to use:
+PYTHON="${PYTHON:-$(command -v python3 2>/dev/null || echo "python3")}"
+PIP="${PIP:-$(command -v pip 2>/dev/null || echo "pip")}"
+ANSIBLE_GALAXY="${ANSIBLE_GALAXY:-$(command -v ansible-galaxy 2>/dev/null || echo "ansible-galaxy")}"
+
+BASE_D="ansible_galaxy/ansible_collections/alexbarton/boilerplate"
+
+#
+# Show usage information on stderr.
+#
+Usage() {
+	{
+		echo "$0 <command>"
+		echo
+		echo "  help       Show this help text and exit."
+		echo "  init       Initialize project and boilerplate code."
+		echo "  upgrade    Upgrade boilerplate code and dependencies. [Alias: update, up]"
+		echo "    --force  Force overwriting an existing role or collection."
+		echo
+	} >&2
+}
+
+#
+# Initialize a new project.
+#
+# Create some default files and call Upgrade() afterwards. This function does not
+# overwrite any already existing file.
+#
+Init() {
+	if [ $# -ne 0 ]; then
+		Usage
+		exit 1
+	fi
+	if [ -e Makefile.boilerplate ]; then
+		echo "This is the upstream project! Don't call \"init\" on it!" >&2
+		exit 1
+	fi
+	echo "Initialize project:"
+
+	for file in \
+		README.md \
+		LICENSE \
+	; do
+		test -e "${file}" || touch "${file}"
+	done
+	mkdir -p .vscode playbooks roles
+	test -e "hosts.ini" || Init_HostsIni
+	test -e "Makefile" || Init_Makefile
+	test -e "requirements.yml" || Init_RequirementsYml
+
+	Upgrade --init
+}
+
+#
+# Create a Makefile template file.
+#
+Init_Makefile() {
+	echo "Creating \"Makefile\" ..."
+	cat >Makefile <<EOF
+#
+# Makefile
+#
+
+SOURCE_ROOT ?= \$(CURDIR)
+
+# Make sure that the Ansible Boilerplate Collection project is set up (its
+# files are "available"), and initialize it if not!
+_DUMMY := \$(shell test -e ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate || bin/ansible-boilerplate upgrade >&2)
+
+default: all
+
+# Include the Ansible Boilerplate Collection Makefile fragment:
+include ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate
+
+all:
+
+check:
+
+install:
+
+clean:
+
+distclean: clean
+
+maintainer-clean: distclean
+
+.PHONY: default all check install clean distclean maintainer-clean
+EOF
+}
+
+#
+# Create a hosts.ini template file.
+#
+Init_HostsIni() {
+	echo "Creating \"hosts.ini\" ..."
+	cat >hosts.ini <<EOF
+# Ansible hosts list
+
+[all_managed]
+localhost
+EOF
+}
+
+#
+# Create a requirements.yml template file.
+#
+Init_RequirementsYml() {
+	echo "Creating \"requirements.yml\" ..."
+	cat >requirements.yml <<EOF
+---
+# Ansible dependencies
+
+collections:
+  - ${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}
+
+roles:
+  []
+EOF
+}
+
+#
+# Upgrade a project.
+#
+# - Initialize a Python virtual environment (when a ".venv" directory exists
+#   or the ansible-galaxy command is not found).
+# - Install Ansible when ansible-galaxy command is not found.
+# - Install "ansible-boilerplate" collection when not found.
+# - Update local "ansible-boilerplate" setup: copy script, create links, ...
+# - Upgrade template files.
+# - Install/upgrade Python dependencies (from requirements.txt file).
+# - Install/upgrade Ansible Galaxy dependencies (from requirements.yml file).
+#
+# --force: Passed to "ansible-galaxy install" command.
+# --init: Upgrade() is called by the Init() function.
+#
+Upgrade() {
+	unset do_force
+	while [ $# -gt 0 ]; do
+		case "$1" in
+			"--force")
+				do_force="--force"
+				;;
+			"--init")
+				is_init="--init"
+				;;
+			*)
+				Usage
+				exit 1
+		esac
+		shift
+	done
+	[ -z "${is_init}" ] && echo "Upgrade project:"
+
+	# Check Python virtual environment
+	if [ -d .venv ] || ! command -v "${ANSIBLE_GALAXY}" >/dev/null; then
+		# Either an existing ".venv" folder was found or the
+		# ansible-galaxy(1) command was not found on the system, so
+		# let's use a Python virtual environment!
+		echo "Using a Python virtual environment."
+		PIP="./.venv/bin/pip"
+		ANSIBLE_GALAXY="./.venv/bin/ansible-galaxy"
+		if ! [ -x .venv/bin/pip ]; then
+			echo "Initializing Python virtual environment ..."
+			"${PYTHON}" -m venv .venv
+			"${PIP}" install -U pip setuptools
+		fi
+	fi
+	for var in PYTHON PIP ANSIBLE_GALAXY; do
+		eval 'echo " - ${var} is \"$'"${var}"'\"."'
+	done
+
+	if ! [ -x "${ANSIBLE_GALAXY}" ]; then
+		echo "Installing Ansible ..."
+		"${PIP}" install -U ansible
+	fi
+
+	# Are we running in a dependent project? If so, perform specific upgrade tasks!
+	# shellcheck disable=SC2086
+	[ -e Makefile.boilerplate ] || Upgrade_Dependent ${is_init}
+
+	if [ -r requirements.txt ]; then
+		echo "Installing Python dependencies ..."
+		"${PIP}" install -U -r requirements.txt
+	fi
+
+	if [ -r requirements.yml ]; then
+		echo "Upgrading Ansible Galaxy dependencies ..."
+		# shellcheck disable=SC2248
+		"${ANSIBLE_GALAXY}" collection install -U -r requirements.yml ${do_force}
+		# shellcheck disable=SC2248
+		"${ANSIBLE_GALAXY}" role install -r requirements.yml ${do_force}
+	fi
+}
+
+#
+# Upgrade steps for dependent projects only.
+#
+# --init: Upgrade() is called by the Init() function.
+#
+Upgrade_Dependent() {
+	collection="${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}"
+	echo "Installing/upgrading \"${collection}\" ..."
+	"${ANSIBLE_GALAXY}" collection install -U -p ansible_galaxy "${collection}"
+
+	echo "Copying \"boilerplate\" script into bin/ directory ..."
+	mkdir -p bin
+	cp -av "${BASE_D}/bin/ansible-boilerplate" "bin/ansible-boilerplate"
+
+	echo "Creating symbolic links to files inside of the Boilerplate Collection ..."
+	for file in \
+		bin/a \
+		bin/ap \
+		bin/aps \
+	; do
+		# Create (new) symbolic links, when the target already is a symbolic link or
+		# does not yet exists. Don't overwrite existing regular files etc.!
+		test -L "${file}" && ln -fsv "../${BASE_D}/${file}" "${file}"
+		test -e "${file}" || ln -fsv "../${BASE_D}/${file}" "${file}"
+	done
+
+	echo "Upgrading template files from the Boilerplate Collection ..."
+	for file in \
+		.ansible-lint \
+		.editorconfig \
+		.gitignore \
+		.vscode/settings.json \
+		.yamllint.yml \
+		ansible.cfg \
+		requirements.txt \
+	; do
+		# shellcheck disable=SC2086
+		Upgrade_Template "${file}" ${is_init}
+	done
+
+	# Verify that the Boilerplate Collection is available now!
+	"${ANSIBLE_GALAXY}" collection verify --offline alexbarton.boilerplate
+}
+
+#
+# Upgrade a template file.
+#
+# --init: Initialize a new project, therefore create the template file if it
+#         does not yet exist.
+#
+Upgrade_Template() {
+	# Does the target directory exist? Skip this template file if not!
+	[ -d "$(dirname "$1")" ] || return 0
+
+	# Return when the target file does not exist and not in "init mode":
+	[ ! -e "$1" ] && [ "$2" != "--init" ] && return 0
+
+	# Remove the target when it is a symbolic link.
+	[ -L "$1" ] && rm -v "$1"
+
+	# Do not override the target when it exists already!
+	if [ -e "$1" ]; then
+		# Target already exists. Is it different?
+		if ! cmp "$1" "${BASE_D}/$1"; then
+			# Files are not the same! Install new version in parallel:
+			install -b -m 0644 -p -v "${BASE_D}/$1" "$1.new"
+		fi
+	else
+		# Target does not yet exist:
+		install -b -m 0644 -p -v "${BASE_D}/$1" "$1"
+	fi
+}
+
+cmd="$1"
+[ $# -gt 0 ] && shift
+
+case "${cmd}" in
+	"init")
+		Init "$@"
+		;;
+	"upgrade"|"update"|"up")
+		Upgrade "$@"
+		;;
+	"help"|"--help")
+		Usage
+		;;
+	*)
+		Usage
+		exit 1
+esac
+exit 0

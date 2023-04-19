@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Ansible Collection Boilerplate:
+# "ap": ansible-playbook(1) wrapper script.
+#
+
+# Change working directory to the base directory ...
+cd "$(dirname "$0")/.." || exit 1
+
+# Prepare environment ...
+set -e
+pwd
+test -x "${PWD}/.venv/bin/ansible-playbook" || make "${PWD}/.venv/bin/ansible"
+
+# Get playbook name:
+play="$1"
+shift
+
+# Search playbook ...
+unset playbook
+for dir in \
+	. \
+	playbooks{,/deploy,/site} \
+	ansible_galaxy/ansible_collections/*/*/playbooks \
+; do
+	playbook="${dir}/${play}.yml"
+	test -r "${playbook}" && break
+	unset playbook
+done
+[[ -n "${playbook}" ]] || playbook="${play}"
+
+# Options ...
+options=("$@")
+
+[[ -r .ansible-vault-secret ]] && options+=("--vault-password-file=.ansible-vault-secret")
+
+# Run ansible-playbook(1):
+set -x
+"${PWD}/.venv/bin/ansible-playbook" "${playbook}" "${options[@]}"

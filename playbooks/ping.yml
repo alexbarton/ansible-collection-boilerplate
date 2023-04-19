@@ -1,0 +1,15 @@
+---
+# Connect to a system and run the Ansible "ping" module on it.
+#
+# Example:
+# ./bin/ap ping -l example.host.name
+#
+
+- name: Ping system
+  any_errors_fatal: true
+  hosts: '{{target|default("all")}}'
+
+  tasks:
+
+    - name: Run the Ansible "ping" module
+      ansible.builtin.ping:

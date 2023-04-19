@@ -1,0 +1,14 @@
+---
+# ansible-lint configuration.
+# See <https://ansible-lint.readthedocs.io/configuring/>.
+
+exclude_paths:
+  - .git/
+  - .venv/
+  - ansible_galaxy/ansible_collections/
+  - ansible_galaxy/ansible_roles/
+  - bin/
+  - requirements.yml
+
+skip_list:
+  - galaxy[version-incorrect]

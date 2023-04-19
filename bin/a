@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Ansible Collection Boilerplate:
+# "a": ansible(1) wrapper script.
+#
+
+# Change working directory to the base directory ...
+cd "$(dirname "$0")/.." || exit 1
+
+# Prepare environment ...
+set -e
+pwd
+test -x "${PWD}/.venv/bin/ansible" || make "${PWD}/.venv/bin/ansible"
+
+# Options ...
+options=("$@")
+
+[[ -r .ansible-vault-secret ]] && options+=("--vault-password-file=.ansible-vault-secret")
+
+# Run ansible(1):
+set -x
+"${PWD}/.venv/bin/ansible" "${options[@]}"
