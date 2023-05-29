@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Ansible Collection Boilerplate:
 # "a": ansible(1) wrapper script.
