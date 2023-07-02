@@ -30,6 +30,8 @@ distclean-ansible:
 	rm -fr "$(SOURCE_ROOT)"/.venv
 #	Remove Ansible Galaxy collections and roles
 	rm -fr "$(SOURCE_ROOT)"/ansible_galaxy/ansible_collections "$(SOURCE_ROOT)"/ansible_galaxy/ansible_roles
+#	Try to remove the "ansible_galaxy" directory (if empty), but ignore errors.
+	rmdir "$(SOURCE_ROOT)"/ansible_galaxy || true
 #	Remove cache directory, used by the Ansible "facts cache" for example ...
 	rm -fr "$(SOURCE_ROOT)"/.cache
 #	Clean up symlinked commands in dependant projects ...
