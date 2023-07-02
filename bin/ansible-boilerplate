@@ -174,18 +174,17 @@ Upgrade() {
 		eval 'echo " - ${var} is \"$'"${var}"'\"."'
 	done
 
-	if ! [ -x "${ANSIBLE_GALAXY}" ]; then
-		echo "Installing Ansible ..."
-		"${PIP}" install -U ansible
-	fi
-
-	# Are we running in a dependent project? If so, perform specific upgrade tasks!
-	# shellcheck disable=SC2086
-	[ -e Makefile.boilerplate ] || Upgrade_Dependent ${is_init}
-
 	if [ -r requirements.txt ]; then
 		echo "Installing Python dependencies ..."
 		"${PIP}" install -U -r requirements.txt
+	fi
+
+	# Make sure that the "ansible-galaxy" command is available now:
+	if ! [ -x "${ANSIBLE_GALAXY}" ]; then
+		echo "Oops, \"${ANSIBLE_GALAXY}\" not found!" >&2
+		echo "You either need Ansible installed locally or list it as a dependency in" >&2
+		echo "the \"requirements.txt\" file of this project!" >&2
+		exit 1
 	fi
 
 	if [ -r requirements.yml ]; then
@@ -195,6 +194,10 @@ Upgrade() {
 		# shellcheck disable=SC2248
 		"${ANSIBLE_GALAXY}" role install -r requirements.yml ${do_force}
 	fi
+
+	# Are we running in a dependent project? If so, perform specific upgrade tasks!
+	# shellcheck disable=SC2086
+	[ -e Makefile.boilerplate ] || Upgrade_Dependent ${is_init}
 }
 
 #
@@ -203,9 +206,10 @@ Upgrade() {
 # --init: Upgrade() is called by the Init() function.
 #
 Upgrade_Dependent() {
-	collection="${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}"
-	echo "Installing/upgrading \"${collection}\" ..."
-	"${ANSIBLE_GALAXY}" collection install -U -p ansible_galaxy "${collection}"
+	# Verify that the Boilerplate Collection is available now.
+	# NOTE: This dependency must be properly listed in the requirements.yml
+	# file inside of the (dependent) project!
+	"${ANSIBLE_GALAXY}" collection verify --offline alexbarton.boilerplate
 
 	echo "Copying \"boilerplate\" script into bin/ directory ..."
 	mkdir -p bin
@@ -236,9 +240,6 @@ Upgrade_Dependent() {
 		# shellcheck disable=SC2086
 		Upgrade_Template "${file}" ${is_init}
 	done
-
-	# Verify that the Boilerplate Collection is available now!
-	"${ANSIBLE_GALAXY}" collection verify --offline alexbarton.boilerplate
 }
 
 #
