@@ -261,7 +261,7 @@ Upgrade_Template() {
 	# Do not override the target when it exists already!
 	if [ -e "$1" ]; then
 		# Target already exists. Is it different?
-		if ! cmp "$1" "${BASE_D}/$1"; then
+		if [ "$2" = "--init" ] && ! cmp "$1" "${BASE_D}/$1"; then
 			# Files are not the same! Install new version in parallel:
 			install -b -m 0644 -p -v "${BASE_D}/$1" "$1.new"
 		fi
