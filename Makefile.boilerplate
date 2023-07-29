@@ -37,14 +37,14 @@ distclean-ansible:
 $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(SOURCE_ROOT)/requirements.txt $(VENV_BIN)/pip
 #	Install/upgrade Python package manager
 	"$(VENV_BIN)"/pip install --upgrade pip wheel
-	touch "$(VENV_BIN)/pip" "$(VENV_BIN)/wheel"
 #	Install/upgrade Python dependencies ...
 	"$(VENV_BIN)"/pip install --upgrade --requirement $(SOURCE_ROOT)/requirements.txt
-	touch "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
+	touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
 
 $(VENV_BIN)/pip:
 #	Create/upgrade Python "virtual environment"
 	"$(PYTHON)" -m venv "$(SOURCE_ROOT)"/.venv
+	touch -c "$(VENV_BIN)/pip"
 
 .PHONY: venv
 
