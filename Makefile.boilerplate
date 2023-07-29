@@ -7,9 +7,6 @@ SOURCE_ROOT ?= $(CURDIR)
 VENV_D = $(SOURCE_ROOT)/.venv
 VENV_BIN = $(VENV_D)/bin
 
-this_makefile_path:=$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
-this_dir:=$(shell cd $(dir $(this_makefile_path));pwd)
-
 check-ansible: $(VENV_BIN)/ansible-lint
 #	Check Ansible executable ...
 	"$(VENV_BIN)"/ansible --version
@@ -37,12 +34,12 @@ distclean-ansible:
 	  test -h "$$cmd" && rm -f "$$cmd" || true; \
 	 done
 
-$(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(VENV_BIN)/pip
+$(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(SOURCE_ROOT)/requirements.txt $(VENV_BIN)/pip
 #	Install/upgrade Python package manager
 	"$(VENV_BIN)"/pip install --upgrade pip wheel
 	touch "$(VENV_BIN)/pip" "$(VENV_BIN)/wheel"
 #	Install/upgrade Python dependencies ...
-	"$(VENV_BIN)"/pip install --upgrade --requirement $(this_dir)/requirements.txt
+	"$(VENV_BIN)"/pip install --upgrade --requirement $(SOURCE_ROOT)/requirements.txt
 	touch "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
 
 $(VENV_BIN)/pip:
