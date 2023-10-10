@@ -1,9 +1,7 @@
 ---
 namespace: alexbarton
 name: boilerplate
-# NOTE: Remove "galaxy[version-incorrect]" from the "skip_list" in
-# .ansible-lint once you bump the version to 1.0.0 (or higher)!
-version: 0.0.1
+version: 1.0.0
 
 authors:
   - Alexander Barton <alex@barton.de>

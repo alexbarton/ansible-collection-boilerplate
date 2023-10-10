@@ -10,8 +10,5 @@ exclude_paths:
   - bin/
   - requirements.yml
 
-skip_list:
-  - galaxy[version-incorrect]
-
 warn_list:
   - yaml[line-length]
