@@ -34,7 +34,7 @@ environment variable to:
   `/usr/local/src/ansible-collection-boilerplate.git`)
 * a URL to a remote Git repository (e. g.
   `git+https://my.git.server/ansible-collection-boilerplate.git`)
-* the name of an Collection stored on the Ansible Galaxy (e. g.
+* the name of a collection stored on the Ansible Galaxy (e. g.
   `alexbarton.boilerplate`)
 
 Example:
@@ -78,6 +78,7 @@ code repository. For Git, something like this:
 ```bash
 git init
 git add .
+git status --no-column
 git commit -m "Initial commit"
 ```
 
