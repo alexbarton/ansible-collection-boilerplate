@@ -29,7 +29,7 @@ dist: all $(VENV_BIN)/ansible-galaxy
 distcheck: dist
 #	Run tests on distribution archive ...
 	mkdir -p "$(DIST_D)/check"
-	tar -C "$(DIST_D)/check" -xzf "$(DIST_D)"/*.tar.gz
+	tar -C "$(DIST_D)/check" -xzf $$(find "$(DIST_D)" -name '*.tar.gz' | sort -Vr | head -n1)
 	test -e "$(VENV_D)" && ln -fs "$(VENV_D)" "$(DIST_D)/check/.venv"
 	make -C "$(DIST_D)/check" check
 #	Clean up ...
