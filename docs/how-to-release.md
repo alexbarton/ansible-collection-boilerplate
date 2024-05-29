@@ -27,6 +27,7 @@
 
    ```sh
    git add galaxy.yml
+   git diff --cached --patch-with-stat
    git commit --message "Release ${major}.${minor}.${fix}"
    git tag -m "Release ${major}.${minor}.${fix}" -s \
      "rel-${major}-${minor}-${fix}"
