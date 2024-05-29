@@ -10,7 +10,11 @@ default: all
 include Makefile.boilerplate
 
 check: check-ansible
+	if command -v mdl >/dev/null; then make check-mdl; fi
 	if command -v shellcheck >/dev/null; then make check-shellcheck; fi
+
+check-mdl:
+	mdl -g -r '~MD013,~MD029' -w .
 
 check-shellcheck:
 	shellcheck \
