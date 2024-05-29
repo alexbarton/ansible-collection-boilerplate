@@ -190,9 +190,9 @@ Upgrade() {
 
 	if [ -r requirements.yml ]; then
 		echo "Upgrading Ansible Galaxy dependencies ..."
-		# shellcheck disable=SC2248
+		# shellcheck disable=SC2086
 		"${ANSIBLE_GALAXY}" collection install -U -r requirements.yml ${do_force}
-		# shellcheck disable=SC2248
+		# shellcheck disable=SC2086
 		"${ANSIBLE_GALAXY}" role install -r requirements.yml ${do_force}
 	fi
 
