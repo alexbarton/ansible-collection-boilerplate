@@ -244,7 +244,7 @@ Upgrade_Dependent() {
 
 	# List differences in *.new template files, if any:
 	find . \( -name '*.new' -o -name '.*.new' \) | while read -r fname; do
-		diff -u "${fname%*.new}" "${fname};" echo
+		diff -u "${fname%*.new}" "${fname}"; echo
 	done
 }
 
