@@ -131,7 +131,7 @@ EOF
 # - Install Ansible when ansible-galaxy command is not found.
 # - Install "ansible-boilerplate" collection when not found.
 # - Update local "ansible-boilerplate" setup: copy script, create links, ...
-# - Upgrade template files.
+# - Upgrade template files (when "--init" is given).
 # - Install/upgrade Python dependencies (from requirements.txt file).
 # - Install/upgrade Ansible Galaxy dependencies (from requirements.yml file).
 #
@@ -238,7 +238,7 @@ Upgrade_Dependent() {
 		requirements.txt \
 	; do
 		# shellcheck disable=SC2086
-		Upgrade_Template "${file}" ${is_init}
+		Upgrade_Template "${file}" $1
 	done
 }
 
@@ -261,7 +261,7 @@ Upgrade_Template() {
 	# Do not override the target when it exists already!
 	if [ -e "$1" ]; then
 		# Target already exists. Is it different?
-		if [ "$2" = "--init" ] && ! cmp "$1" "${BASE_D}/$1"; then
+		if [ "$2" = "--init" ] && ! cmp -s "$1" "${BASE_D}/$1"; then
 			# Files are not the same! Install new version in parallel:
 			install -b -m 0644 -p -v "${BASE_D}/$1" "$1.new"
 		fi
