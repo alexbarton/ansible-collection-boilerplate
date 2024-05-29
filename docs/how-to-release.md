@@ -44,7 +44,7 @@
 5. Push the commit and tag out:
 
    ```sh
-   git push --tags
+   git push --all
    ```
 
 6. Publish the new release on the Ansible Galaxy repository:
