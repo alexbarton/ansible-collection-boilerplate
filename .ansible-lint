@@ -8,6 +8,7 @@ exclude_paths:
   - ansible_galaxy/ansible_collections/
   - ansible_galaxy/ansible_roles/
   - bin/
+  - group_vars/all/ansible_vault.yml
   - requirements.yml
 
 warn_list:

@@ -12,3 +12,5 @@
 /bin/ap
 /bin/aps
 /dist/
+
+.ansible-vault-secret

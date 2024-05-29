@@ -22,3 +22,4 @@ ignore: |
   .venv/
   ansible_galaxy/ansible_collections/
   ansible_galaxy/ansible_roles/
+  group_vars/all/ansible_vault.yml
