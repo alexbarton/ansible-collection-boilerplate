@@ -241,6 +241,11 @@ Upgrade_Dependent() {
 		# shellcheck disable=SC2086
 		Upgrade_Template "${file}" $1
 	done
+
+	# List differences in *.new template files, if any:
+	find . \( -name '*.new' -o -name '.*.new' \) | while read -r fname; do
+		diff -u "${fname%*.new}" "${fname};" echo
+	done
 }
 
 #
