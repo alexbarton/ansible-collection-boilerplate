@@ -18,8 +18,8 @@ Usage() {
 		echo "$0 <command>"
 		echo
 		echo "  help       Show this help text and exit."
-		echo "  init       Initialize project and boilerplate code."
-		echo "  upgrade    Upgrade boilerplate code and dependencies. [Alias: update, up]"
+		echo "  init       Initialize project and boilerplate code. [Alias: upgrade]"
+		echo "  update     Update boilerplate code and dependencies. [Alias: up]"
 		echo "    --force  Force overwriting an existing role or collection."
 		echo
 	} >&2
@@ -275,10 +275,10 @@ cmd="$1"
 [ $# -gt 0 ] && shift
 
 case "${cmd}" in
-	"init")
+	"init"|"upgrade")
 		Init "$@"
 		;;
-	"upgrade"|"update"|"up")
+	"update"|"up")
 		Upgrade "$@"
 		;;
 	"help"|"--help")
