@@ -10,6 +10,12 @@ default: all
 include Makefile.boilerplate
 
 check: check-ansible
+	if command -v shellcheck >/dev/null; then make check-shellcheck; fi
+
+check-shellcheck:
+	shellcheck \
+	 bin/ansible-boilerplate \
+	 bin/a bin/ap bin/aps
 
 install:
 
