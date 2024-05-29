@@ -143,10 +143,11 @@ Upgrade() {
 	while [ $# -gt 0 ]; do
 		case "$1" in
 			"--force")
-				do_force="--force"
+				do_force="--force --force-with-deps"
 				;;
 			"--init")
 				is_init="--init"
+				do_force="--force --force-with-deps"
 				;;
 			*)
 				Usage
