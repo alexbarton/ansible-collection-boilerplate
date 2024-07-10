@@ -4,6 +4,8 @@
 # "aps": ansible-playbook(1) "site" wrapper script.
 #
 
+set -eu
+
 # Change working directory to the base directory ...
 cd "$(dirname "$0")/.." || exit 1
 ./bin/ap site "$@"

@@ -4,12 +4,12 @@
 # "ap": ansible-playbook(1) wrapper script.
 #
 
+set -eu -o pipefail
+
 # Change working directory to the base directory ...
 cd "$(dirname "$0")/.." || exit 1
 
 # Prepare environment ...
-set -e
-pwd
 test -x "${PWD}/.venv/bin/ansible-playbook" || make "${PWD}/.venv/bin/ansible"
 
 # Get playbook name:
@@ -27,6 +27,9 @@ for dir in \
 	test -r "${playbook}" && break
 	unset playbook
 done
+
+# No playbook found so far by looking in the "well known" path names and by
+# appending the ".yml" extension, so use the given playbook name verbatim.
 [[ -n "${playbook}" ]] || playbook="${play}"
 
 # Options ...

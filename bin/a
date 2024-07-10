@@ -4,12 +4,12 @@
 # "a": ansible(1) wrapper script.
 #
 
+set -eu -o pipefail
+
 # Change working directory to the base directory ...
 cd "$(dirname "$0")/.." || exit 1
 
 # Prepare environment ...
-set -e
-pwd
 test -x "${PWD}/.venv/bin/ansible" || make "${PWD}/.venv/bin/ansible"
 
 # Options ...
