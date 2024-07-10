@@ -17,7 +17,7 @@ BASE_D="ansible_galaxy/ansible_collections/alexbarton/boilerplate"
 #
 Usage() {
 	{
-		echo "$0 <command>"
+		echo "ansible-boilerplate <command>"
 		echo
 		echo "  help       Show this help text and exit."
 		echo "  init       Initialize project and boilerplate code. [Alias: upgrade]"
@@ -280,6 +280,15 @@ Upgrade_Template() {
 		install -b -m 0644 -p -v "${BASE_D}/$1" "$1"
 	fi
 }
+
+if [ "$1" != '__is_reexec__' ]; then
+	# Copy the script to a temporary place and re-execute it from there.
+	# This allows us to safely update the script itself while running.
+	tmp_script=$(mktemp -t $(basename "$0").XXXXXX) || exit 1
+	cp "$0" "${tmp_script}" || exit 1
+	exec /bin/sh "${tmp_script}" __is_reexec__ "$@"
+fi
+[ $# -gt 0 ] && shift
 
 cmd="${1:-}"
 [ $# -gt 0 ] && shift
