@@ -16,6 +16,28 @@ test -x "${PWD}/.venv/bin/ansible-playbook" || make "${PWD}/.venv/bin/ansible"
 play="$1"
 shift
 
+if [[ "${play}" == "--list" ]]; then
+	# List all available playbooks
+	find \
+		. \
+		playbooks{,/deploy,/site} \
+		ansible_galaxy/ansible_collections/*/*/playbooks \
+		-maxdepth 1 -name '*.yml' -type f 2>/dev/null \
+	| while read -r file; do
+		dir=$(dirname "$file")
+		name=$(basename "$file")
+		name=${name%*.yml}
+		case "${name}" in
+			.*|galaxy|requirements)
+				continue
+				;;
+			*)
+				printf -- "- %s [%s]\n" "${name}" "${dir}"
+		esac
+	done || true | sort -u
+	exit 0
+fi
+
 # Search playbook ...
 unset playbook
 for dir in \
