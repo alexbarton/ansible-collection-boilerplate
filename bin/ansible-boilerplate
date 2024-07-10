@@ -243,7 +243,7 @@ Upgrade_Dependent() {
 		requirements.txt \
 	; do
 		# shellcheck disable=SC2086
-		Upgrade_Template "${file}" $1
+		Upgrade_Template "${file}" "${1:-}"
 	done
 
 	# List differences in *.new template files, if any:
