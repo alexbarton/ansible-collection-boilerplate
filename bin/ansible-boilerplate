@@ -307,6 +307,18 @@ case "${cmd}" in
 		Usage
 		;;
 	*)
+		# Look for a plugin:
+		for dir in \
+			./libexec \
+			./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec \
+		; do
+			cmd_file="${dir}/ab-${cmd}"
+			[ -x "${cmd_file}" ] || continue
+			export AP_VERBOSE=0
+			exec "${cmd_file}" "$@" || exit 1
+		done
+
+		# No plugin found, subcommand is unknown!
 		Usage
 		exit 1
 esac
