@@ -1,0 +1,52 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Show usage information on stderr.
+#
+Usage_Exit() {
+	{
+		echo "ansible-boilerplate list <subcommand>"
+		echo
+		echo "  hosts      Show all hosts defined in the inventory"
+		echo "  tags       Show all tags used in the tasks"
+		echo
+	} >&2
+	exit "${1:-0}"
+}
+
+Hosts() {
+	[[ $# -eq 0 ]] || Usage_Exit
+
+	./bin/aps --list-hosts \
+		| sed -n -e 's/^      //p' \
+		| sort -u
+}
+
+Tags() {
+	[[ $# -eq 0 ]] || Usage_Exit
+
+	find playbooks{,/deploy,/site} ansible_galaxy/ansible_collections/*/*/playbooks -name '*.yml' -print0 2>/dev/null \
+		| xargs -0 -n1 ./bin/ap --list-tags \
+		| sed -En -e 's/.*TAGS: \[(.*)\].*/\1/gp' \
+		| sed -e 's/, /\n/g' -e '/^$/d' \
+		| sort -u
+}
+
+cmd="${1:-}"
+[[ $# -gt 0 ]] && shift
+
+case "${cmd}" in
+	"hosts")
+		Hosts "$@"
+		;;
+	"tags")
+		Tags "$@"
+		;;
+	"help"|"--help")
+		Usage_Exit 0
+		;;
+	*)
+		Usage_Exit
+esac
+exit $?

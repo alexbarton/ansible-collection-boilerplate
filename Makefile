@@ -19,7 +19,8 @@ check-mdl:
 check-shellcheck:
 	shellcheck \
 	 bin/ansible-boilerplate \
-	 bin/a bin/ap bin/aps
+	 bin/a bin/ap bin/aps \
+	 libexec/ab-*
 
 install:
 
