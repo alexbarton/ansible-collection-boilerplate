@@ -52,7 +52,7 @@ done
 
 # No playbook found so far by looking in the "well known" path names and by
 # appending the ".yml" extension, so use the given playbook name verbatim.
-[[ -n "${playbook}" ]] || playbook="${play}"
+[[ -n "${playbook:-}" ]] || playbook="${play}"
 
 # Options ...
 options=("$@")

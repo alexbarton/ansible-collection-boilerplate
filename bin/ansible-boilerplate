@@ -282,9 +282,12 @@ Upgrade_Template() {
 }
 
 if [ "$1" != '__is_reexec__' ]; then
+	# Change working directory to the base directory ...
+	cd "$(dirname "$0")/.." || exit 1
+
 	# Copy the script to a temporary place and re-execute it from there.
 	# This allows us to safely update the script itself while running.
-	tmp_script=$(mktemp -t $(basename "$0").XXXXXX) || exit 1
+	tmp_script=$(mktemp -t "$(basename "$0").XXXXXX") || exit 1
 	cp "$0" "${tmp_script}" || exit 1
 	exec /bin/sh "${tmp_script}" __is_reexec__ "$@"
 fi
@@ -307,4 +310,4 @@ case "${cmd}" in
 		Usage
 		exit 1
 esac
-exit 0
+exit $?
