@@ -60,5 +60,5 @@ options=("$@")
 [[ -r .ansible-vault-secret ]] && options+=("--vault-password-file=.ansible-vault-secret")
 
 # Run ansible-playbook(1):
-set -x
+set -x +u
 "${PWD}/.venv/bin/ansible-playbook" "${playbook}" "${options[@]}"
