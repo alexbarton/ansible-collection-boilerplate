@@ -26,5 +26,10 @@ repository: https://github.com/alexbarton/ansible-collection-boilerplate
 
 build_ignore:
   - .DS_Store
+  - .cache
   - .trunk
   - .venv
+  - .vscode
+  - dist
+  - hosts.ini
+  - site.yml
