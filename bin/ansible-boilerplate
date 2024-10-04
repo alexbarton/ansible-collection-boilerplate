@@ -281,7 +281,7 @@ Upgrade_Template() {
 	fi
 }
 
-if [ "$1" != '__is_reexec__' ]; then
+if [ "${1:-}" != '__is_reexec__' ]; then
 	# Change working directory to the base directory ...
 	cd "$(dirname "$0")/.." || exit 1
 
