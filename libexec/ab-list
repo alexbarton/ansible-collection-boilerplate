@@ -12,7 +12,7 @@ Usage_Exit() {
 		echo "  tags       Show all tags used in the tasks"
 		echo
 	} >&2
-	exit "${1:-0}"
+	exit "${1:-1}"
 }
 
 Hosts() {
