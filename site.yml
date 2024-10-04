@@ -1,0 +1,12 @@
+---
+# Dummy empty site playbook.
+
+- name: Dummy empty site playbook
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Hello World debug message
+      ansible.builtin.debug:
+        msg: Hello World!
