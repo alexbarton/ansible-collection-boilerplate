@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# description=List hosts, tags, etc. used in the project.
+#
 
 set -euo pipefail
 
@@ -8,8 +11,8 @@ Usage_Exit() {
 	{
 		echo "ansible-boilerplate list <subcommand>"
 		echo
-		echo "  hosts      Show all hosts defined in the inventory"
-		echo "  tags       Show all tags used in the tasks"
+		echo   "  hosts		Show all hosts defined in the inventory"
+		echo   "  tags		Show all tags used in the tasks"
 		echo
 	} >&2
 	exit "${1:-1}"

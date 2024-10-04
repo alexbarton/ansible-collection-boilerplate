@@ -19,10 +19,16 @@ Usage() {
 	{
 		echo "ansible-boilerplate <command>"
 		echo
-		echo "  help       Show this help text and exit."
-		echo "  init       Initialize project and boilerplate code. [Alias: upgrade]"
-		echo "  update     Update boilerplate code and dependencies. [Alias: up]"
-		echo "    --force  Force overwriting an existing role or collection."
+		echo   "  help		Show this help text and exit."
+		echo   "  init		Initialize project and boilerplate code. [Alias: upgrade]"
+		echo   "  update	Update boilerplate code and dependencies. [Alias: up]"
+		echo   "    --force	Force overwriting an existing role or collection."
+		for plugin in $(Get_Plugin_Files); do
+			cmd=$(basename "${plugin}" | sed -e 's/^ab-//')
+			description=$(grep -F '# description=' "${plugin}" | cut -d= -f2-)
+			[ ${#cmd} -lt 8 ] && cmd="${cmd}\t"
+			echo "  ${cmd}	${description:-(no description found)}"
+		done | sort
 		echo
 	} >&2
 }
