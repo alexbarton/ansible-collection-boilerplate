@@ -310,6 +310,23 @@ Get_Plugin_Files() {
 		| head -n "${max}"
 }
 
+#
+# Check that we are in the project root directory.
+#
+Check_Project_Dir() {
+	[ -r ansible.cfg ] && return 0
+	# Oops, not in an Ansible project root directory!?
+	echo "Oops, looks like \"$PWD\" is not an Ansible project directory!?" >&2
+	if [ -x ./ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/ansible-boilerplate ]; then
+		echo "You can initialize a new project with the following command:" >&2
+		echo "  ${0} init" >&2
+	else
+		echo "Probably you have not initialized it yet?" >&2
+	fi
+	echo "Aborting." >&2
+	exit 1
+}
+
 # Change working directory to the base directory in the "main" script:
 if [ "${1:-}" != '__is_reexec__' ]; then
 	# This is the "main" script, good. Now try to detect if we were called
@@ -353,6 +370,7 @@ case "${cmd}" in
 		Init "$@"
 		;;
 	"update"|"up")
+		Check_Project_Dir
 		Upgrade "$@"
 		;;
 	"help"|"--help")
@@ -364,6 +382,7 @@ case "${cmd}" in
 		;;
 	*)
 		# Look for a plugin:
+		Check_Project_Dir
 		cmd_file=$(Get_Plugin_Files "${cmd}") || true
 		if [ -x "${cmd_file}" ]; then
 			export AP_VERBOSE=0
