@@ -12,6 +12,7 @@ include Makefile.boilerplate
 check: check-ansible
 	if command -v mdl >/dev/null; then make check-mdl; fi
 	if command -v shellcheck >/dev/null; then make check-shellcheck; fi
+	@printf "\n\e[32;1mChecks completed successfully.\e[0m\n\n"
 
 check-mdl:
 	mdl -g -r '~MD013,~MD029' -w .
