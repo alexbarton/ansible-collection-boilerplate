@@ -281,17 +281,26 @@ Upgrade_Template() {
 	fi
 }
 
+# Change working directory to the base directory in the "main" script:
 if [ "${1:-}" != '__is_reexec__' ]; then
-	# Change working directory to the base directory ...
 	cd "$(dirname "$0")/.." || exit 1
-
-	# Copy the script to a temporary place and re-execute it from there.
-	# This allows us to safely update the script itself while running.
-	tmp_script=$(mktemp -t "$(basename "$0").XXXXXX") || exit 1
-	cp "$0" "${tmp_script}" || exit 1
-	exec /bin/sh "${tmp_script}" __is_reexec__ "$@"
 fi
-[ $# -gt 0 ] && shift
+
+case " $* " in
+	*" init "*|*" upgrade "*|*" update "*|*" up "*)
+		# Copy the script to a temporary place and re-execute it from
+		# there. This allows us to safely update the script itself
+		# while running.
+		if [ "${1:-}" != '__is_reexec__' ]; then
+			tmp_script=$(mktemp -t "$(basename "$0").XXXXXX") || exit 1
+			cp "$0" "${tmp_script}" || exit 1
+			exec /bin/sh "${tmp_script}" __is_reexec__ "$@"
+		fi
+		# This is the re-executed script; skip the marker argument!
+		[ $# -gt 0 ] && shift
+		;;
+	*)
+esac
 
 cmd="${1:-}"
 [ $# -gt 0 ] && shift
