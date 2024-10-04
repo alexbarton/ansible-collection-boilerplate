@@ -26,8 +26,12 @@ Hosts() {
 Tags() {
 	[[ $# -eq 0 ]] || Usage_Exit
 
-	find playbooks{,/deploy,/site} ansible_galaxy/ansible_collections/*/*/playbooks -name '*.yml' -print0 2>/dev/null \
-		| xargs -0 -n1 ./bin/ap --list-tags \
+	(
+		find ./ -maxdepth 2 -name 'site.yml' -print0 2>/dev/null || true;
+		find ./play*/ -maxdepth 2 -name '*.yml' -a -not -name 'site.yml' 2>/dev/null | grep -Fv '/site/' | tr '\n' '\0' || true;
+		find ./ansible_galaxy/ -maxdepth 4 -name 'play*' -type d 2>/dev/null | xargs -I _ find _ -maxdepth 1 -name '*.yml' -print0 2>/dev/null;
+	) \
+		| xargs -0 -I _ ./bin/ap _ --list-tags \
 		| sed -En -e 's/.*TAGS: \[(.*)\].*/\1/gp' \
 		| sed -e 's/, /\n/g' -e '/^$/d' \
 		| sort -u
