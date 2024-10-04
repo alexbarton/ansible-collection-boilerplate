@@ -29,7 +29,6 @@ build_ignore:
   - .cache
   - .trunk
   - .venv
-  - .vscode
   - dist
   - hosts.ini
   - site.yml
