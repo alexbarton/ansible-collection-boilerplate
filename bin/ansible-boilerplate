@@ -281,6 +281,29 @@ Upgrade_Template() {
 	fi
 }
 
+#
+# Get all plugin file names.
+#
+# This function returns a newline separated list of full path names of all
+# found plugins, including the "ab-" prefix.
+#
+# $1: Explicit plugin name to search for, _without_ the "ab-" prefix! When
+#     given, exactly 0 or 1 (the 1st) results are returned, even when a
+#     matching plugin can be found in more than one plugin directories.
+#
+Get_Plugin_Files() {
+	[ -z "${1:-}" ] && max=9999 || max=1
+	find \
+		./libexec \
+		/usr/local/libexec/ansible-boilerplate/ \
+		/usr/local/lib/ansible-boilerplate/ \
+		./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec \
+		/usr/libexec/ansible-boilerplate/ \
+		-type f \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
+		-name "ab-${1:-*}" 2>/dev/null \
+		| head -n "${max}"
+}
+
 # Change working directory to the base directory in the "main" script:
 if [ "${1:-}" != '__is_reexec__' ]; then
 	cd "$(dirname "$0")/.." || exit 1
@@ -315,17 +338,17 @@ case "${cmd}" in
 	"help"|"--help")
 		Usage
 		;;
+	"")
+		Usage
+		exit 1
+		;;
 	*)
 		# Look for a plugin:
-		for dir in \
-			./libexec \
-			./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec \
-		; do
-			cmd_file="${dir}/ab-${cmd}"
-			[ -x "${cmd_file}" ] || continue
+		cmd_file=$(Get_Plugin_Files "${cmd}") || true
+		if [ -x "${cmd_file}" ]; then
 			export AP_VERBOSE=0
 			exec "${cmd_file}" "$@" || exit 1
-		done
+		fi
 
 		# No plugin found, subcommand is unknown!
 		Usage
