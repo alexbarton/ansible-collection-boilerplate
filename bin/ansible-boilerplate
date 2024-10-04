@@ -312,7 +312,21 @@ Get_Plugin_Files() {
 
 # Change working directory to the base directory in the "main" script:
 if [ "${1:-}" != '__is_reexec__' ]; then
-	cd "$(dirname "$0")/.." || exit 1
+	# This is the "main" script, good. Now try to detect if we were called
+	# from the "galaxy" directory or from the "bin" directory of the local
+	# project:
+	if [ -e ".venv" ]; then
+		# Looks like we _are_ in the toplevel project directory. Either
+		# of the ansible-boilerplate project, or a project using it.
+		# Both is good, so nothing to do!
+		:
+	elif [ -e "$(dirname "$0")/../Makefile.boilerplate" ]; then
+		# Looks like the "galaxy" directory.
+		cd "$(dirname "$0")/../../../../.." || exit 1
+	else
+		# Does not look like the "galaxy" directory ...
+		cd "$(dirname "$0")/.." || exit 1
+	fi
 fi
 
 case " $* " in
