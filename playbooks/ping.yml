@@ -6,8 +6,8 @@
 #
 
 - name: Ping system
-  any_errors_fatal: true
   hosts: '{{target|default("all")}}'
+  gather_facts: false
 
   tasks:
 
