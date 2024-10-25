@@ -9,7 +9,7 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
-## Release *TBD*
+## Release 1.4.0 (2024-10-25)
 
 - Add new "get-facts" playbook.
 - "list" plugin: Add "plays" subcommand to list all available playbooks.
