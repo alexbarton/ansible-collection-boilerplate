@@ -6,9 +6,13 @@ Boilerplate Collection.
 
 ## "ansible-boilerplate" Script
 
-Management script for the Ansible Boilerplate Collection itself. Used to
-initialize new projects as well as upgrading (activating) dependent projects
-using this collection.
+Management script for the Ansible Boilerplate Collection itself and Ansible
+helper functions.
+
+Run `./bin/ansible-boilerplate --help` to see all available subcommands.
+
+Used to initialize new projects as well as upgrading (activating) dependent
+projects using this collection.
 
 ## "a" Wrapper Script for "ansible" Command
 

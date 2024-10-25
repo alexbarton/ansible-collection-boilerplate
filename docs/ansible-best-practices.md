@@ -6,7 +6,7 @@ Before introducing new tags, check which ones are already available and try to
 reuse those whenever possible!
 
 ```shell
-./bin/aps --list-tags | grep -i 'task tags' | cut -d'[' -f2 | sed -e 's/, /\n/g' -e 's/]//' | sort -u
+./bin/ansible-boilerplate list tags
 ```
 
 Or, without any Ansible tools:
