@@ -8,14 +8,22 @@
 
 ## Steps to Create the new Release
 
-1. Set new version number (major.minor.fix):
+1. Set new version number (major.minor.fix) and Galaxy API key in the
+   environment:
 
    ```sh
    major=1; minor=2; fix=3
    galaxy_api_key=…
    ```
 
-2. Update `galaxy.yml`, bump the version number accordingly:
+2. Update the `CHANGELOG.md` file for the new release!
+
+   ```sh
+   git log …
+   vim CHANGELOG.md
+   ```
+
+3. Update `galaxy.yml`, bump the version number accordingly:
 
    ```sh
    sed -i'.bak' \
@@ -23,17 +31,17 @@
    rm -fv galaxy.yml.bak
    ```
 
-3. Create the release commit and signed tag:
+4. Create the release commit and signed tag:
 
    ```sh
-   git add galaxy.yml
+   git add CHANGELOG.md galaxy.yml
    git diff --cached --patch-with-stat
    git commit --message "Release ${major}.${minor}.${fix}"
    git tag -m "Release ${major}.${minor}.${fix}" -s \
      "rel-${major}-${minor}-${fix}"
    ```
 
-4. Create the distribution archive:
+5. Create the distribution archive:
 
    ```sh
    make distcheck
@@ -41,13 +49,13 @@
 
    The resulting `.tar.gz` file is in the `./dist/` sub-directory.
 
-5. Push the commit and tag out:
+6. Push the commit and tag out:
 
    ```sh
    git push --follow-tags
    ```
 
-6. Publish the new release on the Ansible Galaxy repository:
+7. Publish the new release on the Ansible Galaxy repository:
 
    ```sh
    .venv/bin/ansible-galaxy collection publish \
@@ -55,5 +63,5 @@
      "dist/alexbarton-boilerplate-${major}.${minor}.${fix}.tar.gz"
    ```
 
-7. Check the result online:
+8. Check the result online:
    <https://galaxy.ansible.com/ui/repo/published/alexbarton/boilerplate/>
