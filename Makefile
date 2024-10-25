@@ -10,8 +10,16 @@ default: all
 include Makefile.boilerplate
 
 check: check-ansible
-	if command -v mdl >/dev/null; then make check-mdl; fi
-	if command -v shellcheck >/dev/null; then make check-shellcheck; fi
+	@if command -v mdl >/dev/null; then \
+	    make check-mdl; \
+	 else \
+	    printf '\e[1;33mWarning:\e[0m "mdl" not found, checking Markdown tests!\n'; \
+	 fi
+	@if command -v shellcheck >/dev/null; then \
+	    make check-shellcheck; \
+	 else \
+	    printf '\e[1;33mWarning:\e[0m "shellcheck" not found, checking shell script tests!\n'; \
+	 fi
 	@printf "\n\e[32;1mChecks completed successfully.\e[0m\n\n"
 
 check-mdl:
