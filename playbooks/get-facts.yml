@@ -1,0 +1,34 @@
+---
+# Connect to a system and gather Ansible "facts" and "package facts" on it.
+#
+# Example:
+# ./bin/ap get-facts -l example.host.name
+#
+
+- name: Get Ansible host and package facts
+  hosts: '{{target|default("all")}}'
+  gather_facts: false
+
+  tasks:
+
+    - name: Get host facts
+      tags:
+        - facts
+      ansible.builtin.gather_facts:
+
+    - name: Get package facts
+      tags:
+        - facts
+        - packages
+      ansible.builtin.package_facts:
+        manager: "{{ ansible_pkg_mgr }}"
+      when:
+        - ansible_pkg_mgr in [
+            "apk",
+            "apt",
+            "pacman",
+            "pkg",
+            "pkg_info",
+            "portage",
+            "rpm",
+          ]

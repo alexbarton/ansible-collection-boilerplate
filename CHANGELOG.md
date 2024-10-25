@@ -11,6 +11,7 @@ details, fixes and internal changes.
 
 ## Release *TBD*
 
+- Add new "get-facts" playbook.
 - "list" plugin: Add "plays" subcommand to list all available playbooks.
 - playbooks/ping: Do not stop on errors and do not collect "facts".
 
