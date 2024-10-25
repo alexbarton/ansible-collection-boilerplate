@@ -12,6 +12,7 @@ Usage_Exit() {
 		echo "ansible-boilerplate list <subcommand>"
 		echo
 		echo   "  hosts		Show all hosts defined in the inventory"
+		echo   "  plays		Show all available playbooks"
 		echo   "  tags		Show all tags used in the tasks"
 		echo
 	} >&2
@@ -24,6 +25,11 @@ Hosts() {
 	./bin/aps --list-hosts \
 		| sed -n -e 's/^      //p' \
 		| sort -u
+}
+
+Plays() {
+	[[ $# -eq 0 ]] || Usage_Exit
+	./bin/ap --list
 }
 
 Tags() {
@@ -46,6 +52,9 @@ cmd="${1:-}"
 case "${cmd}" in
 	"hosts")
 		Hosts "$@"
+		;;
+	"plays"|"playbooks")
+		Plays "$@"
 		;;
 	"tags")
 		Tags "$@"
