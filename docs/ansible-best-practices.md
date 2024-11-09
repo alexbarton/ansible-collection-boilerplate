@@ -25,5 +25,7 @@ grep -r -A 5 -h tags roles/*/tasks \
 
    ```yaml
    - name: Flush all handlers
+     tags:
+       - always
      ansible.builtin.meta: flush_handlers
    ```
