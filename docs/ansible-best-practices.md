@@ -29,3 +29,8 @@ grep -r -A 5 -h tags roles/*/tasks \
        - always
      ansible.builtin.meta: flush_handlers
    ```
+
+2. Use the generic `ansible.builtin.package` module, only use the package
+   manager specific modules like `ansible.builtin.apt` or `ansible.builtin.dnf`
+   when you make use of their specific options! This helps making your role or
+   task more independent of the operating system used.
