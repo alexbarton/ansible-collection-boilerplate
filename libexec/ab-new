@@ -1,0 +1,95 @@
+#!/bin/bash
+#
+# description=Create a new Ansible object.
+#
+
+set -euo pipefail
+
+# Show usage information on stderr.
+#
+Usage_Exit() {
+	{
+		echo "ansible-boilerplate new <subcommand>"
+		echo
+		echo   "  role <name>	Create a new role"
+		echo
+	} >&2
+	exit "${1:-1}"
+}
+
+Role() {
+	[[ $# -eq 1 ]] || Usage_Exit
+
+	local roles_d
+	[[ -d "roles" ]] && roles_d="roles/$1" || roles_d="./$1"
+
+	if [[ -e "${roles_d}" ]]; then
+		echo "Role \"$1\" already exists in \"${roles_d}\"! Aborting." >&2
+		exit 1
+	fi
+
+	# Validate role name ...
+	if [[ ! "$1" =~ ^[[:lower:]][[:lower:][:digit:]_]*$ ]]; then
+		echo "Role name \"$1\" violates naming scheme! Aborting." >&2
+		exit 1
+	fi
+
+	for d in meta defaults tasks; do
+		mkdir -pv "${roles_d}/${d}"
+		main_yml="${roles_d}/${d}/main.yml"
+		if [[ ! -e "$main_yml" ]]; then
+			echo "---" >"$main_yml"
+			echo "# ${d} file for ${1}" >>"$main_yml"
+		fi
+	done
+
+	# Overwrite meta/main.yml with "galaxy info":
+	cat >"${roles_d}/meta/main.yml" <<-EOF
+		---
+		galaxy_info:
+		  author: ${NAME:-}
+		  description:
+		  license: MIT
+
+		  min_ansible_version: "2.17"
+
+		  platforms:
+		    - name: Debian
+		      versions:
+		        - all
+
+		  galaxy_tags:
+		    - tag1
+		    - tag2
+
+		dependencies: []
+	EOF
+
+	# Add task template:
+	cat >>"${roles_d}/tasks/main.yml" <<-EOF
+
+		- name: $1
+		  tags:
+		    - $1
+		  ansible.builtin.debug:
+		    msg: Hello $1!
+	EOF
+
+	echo "Role \"$1\" created in \"${roles_d}\"."
+	exit 0
+}
+
+cmd="${1:-}"
+[[ $# -gt 0 ]] && shift
+
+case "${cmd}" in
+	"role")
+		Role "$@"
+		;;
+	"help"|"--help")
+		Usage_Exit 0
+		;;
+	*)
+		Usage_Exit
+esac
+exit $?
