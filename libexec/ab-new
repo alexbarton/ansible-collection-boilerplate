@@ -92,4 +92,3 @@ case "${cmd}" in
 	*)
 		Usage_Exit
 esac
-exit $?
