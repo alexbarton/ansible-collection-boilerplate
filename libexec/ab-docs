@@ -1,0 +1,35 @@
+#!/bin/bash
+#
+# description=Show documentation.
+#
+
+set -euo pipefail
+
+# Show usage information on stderr.
+#
+Usage_Exit() {
+	{
+		echo "ansible-boilerplate docs <topic>"
+		echo
+	} >&2
+	exit "${1:-1}"
+}
+
+case "${1:-}" in
+	"")
+		Usage_Exit
+		;;
+	"help"|"--help")
+		Usage_Exit 0
+		;;
+esac
+
+# Change working directory to the base directory ...
+cd "$(dirname "$0")/.." || exit 1
+
+# Prepare environment ...
+test -x "${PWD}/.venv/bin/ansible-doc" || make "${PWD}/.venv/bin/ansible"
+
+# Run ansible(1):
+set -x
+"${PWD}/.venv/bin/ansible-doc" "$@"
