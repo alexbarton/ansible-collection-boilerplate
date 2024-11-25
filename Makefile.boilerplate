@@ -57,8 +57,13 @@ all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
 check: check-ansible
 distclean: distclean-ansible
 
+# Upgrade the project using "ansible-boilerplate upgrade" command:
 upgrade: $(SOURCE_ROOT)/bin/ansible-boilerplate
 	$(SOURCE_ROOT)/bin/ansible-boilerplate upgrade
 
-.PHONY: check distclean
+# Clean up, for example after upgrading the project.
+cleanup:
+	find $(SOURCE_ROOT) \( -name '*.old' -o -name '*.new' \) -exec rm -iv {} \;
+
+.PHONY: all check distclean upgrade cleanup
 endif
