@@ -68,7 +68,7 @@ Role() {
 	# Add task template:
 	cat >>"${roles_d}/tasks/main.yml" <<-EOF
 
-		- name: $1
+		- name: Do $1
 		  tags:
 		    - $1
 		  ansible.builtin.debug:
