@@ -47,8 +47,8 @@ Role() {
 	cat >"${roles_d}/meta/main.yml" <<-EOF
 		---
 		galaxy_info:
-		  author: ${NAME:-}
-		  description:
+		  author: ${NAME:-$LOGNAME}
+		  description: ...
 		  license: MIT
 
 		  min_ansible_version: "2.17"
@@ -74,6 +74,29 @@ Role() {
 		  ansible.builtin.debug:
 		    msg: Hello $1!
 	EOF
+
+	# Add README.md:
+	cat >>"${roles_d}/README.md" <<-EOF
+		# $1
+
+		...
+
+		## Role Variables
+
+		None.
+		Or list of variables:
+
+		- \`$1_var1\`: Description ...
+
+		## License
+
+		MIT
+
+		## Author Information
+	EOF
+	printf "\nCopyright (C)%s %s" \
+		"$(date +%Y)" "${NAME:-$LOGNAME} <${EMAIL:-$LOGNAME@...}>." \
+		>>"${roles_d}/README.md"
 
 	echo "Role \"$1\" created in \"${roles_d}\"."
 	exit 0
