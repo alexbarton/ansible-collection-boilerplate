@@ -21,13 +21,28 @@ grep -r -A 5 -h tags roles/*/tasks \
 1. Always flush all handlers first, earlier tasks could have changed the
    package manager (repository) configuration!
 
+   You don't have to (and probably shouldn't) use the "always" tag, but you
+   have to include *all the tags* assigned to subsequent tasks that possibly
+   depend on handlers to be run first!
+
    Example:
 
    ```yaml
-   - name: Flush all handlers
+   # Earlier tasks could have modified the package manager configuration!
+   - name: Flush all handlers before installing packages
      tags:
-       - always
+       - packages
+       - apt
      ansible.builtin.meta: flush_handlers
+
+   - name: Install a example package
+     tags:
+       - apt
+       - packages
+     ansible.builitin.apt:
+       name: logrotate
+       state: present
+       install_recommends: false
    ```
 
 2. Use the generic `ansible.builtin.package` module, only use the package
