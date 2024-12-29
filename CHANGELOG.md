@@ -9,6 +9,17 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 1.5.0
+
+- Restructure and enhance the `ansible-best-practices.md` document: Add a new
+  "Naming Conventions" section, explain use of tags on `flush_handlers` when
+  installing packages and add recommendation to use `ansible.builtin.package`.
+- Add new "new" extension. For now, it can create templates for new roles.
+- Add new "docs" extension, a wrapper for `ansible-doc`.
+- `Makefile.boilerplate`: Add new "cleanup" target
+- `ansible.cfg`: Enable `force_handlers`, which is a saner default
+- Further enhance the `README.md` file
+
 ## Release 1.4.0 (2024-10-25)
 
 - Add new "get-facts" playbook.
@@ -66,8 +77,8 @@ details, fixes and internal changes.
 
 ## Release 1.0.1 (2023-12-08)
 
-- ansible.cfg: "collections_paths" is deprecated, use singular.
-- Update ansible.cfg to current standards.
+- `ansible.cfg`: `collections_paths` is deprecated, use singular.
+- Update `ansible.cfg` to current standards.
 
 ## Release 1.0.0 (2023-10-10)
 
