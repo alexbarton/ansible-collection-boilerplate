@@ -9,7 +9,7 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
-## Release 1.5.0
+## Release 1.5.0 (2024-12-29)
 
 - Restructure and enhance the `ansible-best-practices.md` document: Add a new
   "Naming Conventions" section, explain use of tags on `flush_handlers` when
