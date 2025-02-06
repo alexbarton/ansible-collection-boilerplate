@@ -9,6 +9,17 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 1.6.0 (2025-02-06)
+
+- `./bin/ansible-boilerplate upgrade` is now an alias for `update` (and `up`),
+  no longer for `init`, and therefore no longer recreates some template files
+  when they no longer exist.
+- You can set (and therefore override) the `ANSIBLE_GALAXY` variable specifying
+  the `ansible-galaxy` command to use ever since, but it was always reset to
+  the version in a Python virtual environment when one was detected. Now, it is
+  only reset to the version in a virtual environment when the `ANSIBLE_GALAXY`
+  variable was *not* explicitly set in the environment.
+
 ## Release 1.5.0 (2024-12-29)
 
 - Restructure and enhance the `ansible-best-practices.md` document: Add a new
