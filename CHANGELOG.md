@@ -9,6 +9,10 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 1.6.1 (2025-02-06)
+
+- Bugfix release: Bring the documentation in line with the changes in 1.6.0.
+
 ## Release 1.6.0 (2025-02-06)
 
 - `./bin/ansible-boilerplate upgrade` is now an alias for `update` (and `up`),
