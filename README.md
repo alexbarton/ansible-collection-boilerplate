@@ -98,34 +98,24 @@ git status --no-column
 git commit -m "Initial commit"
 ```
 
-## Updating and Upgrading an Existing Project
+## Updating an Existing Project
 
 In an existing and already initialized project the `ansible-boilerplate`
-command is available in the `./bin/` directory. You can use it to
-"re-initialize" the project "from scratch" (e.g. after checking it out) and to
-update ("activate") it like this:
+command is available in the `./bin/` directory. You can use it to install (and
+update) the Ansible Galaxy dependencies of your project to their latest
+versions "from scratch" (e.g. after freshly checking out your project) and
+while working on it like this:
 
 ```bash
 ./bin/ansible-boilerplate update
 ```
 
-Or, when you use a Python virtual environment and stick to using the Makefile
-system provided by this project, you can just use the `make` command itself:
+### Using `make`
+
+When you use a Python virtual environment and stick to using the Makefile
+system provided by this project, you can just use the `make` command itself --
+in this case, the make target is called "upgrade":
 
 ```bash
-make all   # Or any other make target.
+make upgrade
 ```
-
-## Upgrade vs. Update
-
-Updating an existing project, either with `./bin/ansible-boilerplate update` or
-by calling any `make` target means to fulfill all Python dependencies in
-`requirements.txt` and all Ansible Galaxy dependencies in `requirements.yml` by
-trying to install the latest/newest compatible versions. Ansible Boilerplate
-scripts are updated (overwritten) with their current versions; configuration is
-left unchanged.
-
-The `./bin/ansible-boilerplate upgrade` or `make upgrade` command do the same
-and *additionally* install new, missing and updated Ansible Boilerplate
-configuration files. Existing configuration files are not overwritten, new
-versions are installed with the ".new" file extension.
