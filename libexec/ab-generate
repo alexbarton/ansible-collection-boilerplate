@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# description=Generate files from existing data or templates
+#
+
+set -euo pipefail
+
+unset FORCE
+
+# Show usage information on stderr.
+Usage_Exit() {
+	{
+		echo "ansible-boilerplate generate [--force|-f] <subcommand>"
+		echo
+		echo   "  readme <role>	Create a README.md file for a role"
+		echo
+		echo
+	} >&2
+	exit "${1:-1}"
+}
+
+Readme() {
+	[[ $# -eq 1 ]] || Usage_Exit
+
+	local roles_d
+	[[ -d "roles" ]] && roles_d="roles/$1" || roles_d="./$1"
+
+	local readme_file="${roles_d}/README.md"
+
+	if [[ ! -e "${roles_d}" ]]; then
+		echo "Role \"$1\" not found in \"${roles_d}\"! Aborting." >&2
+		exit 1
+	fi
+
+	if [[ -e "${readme_file}" && -z "${FORCE:-}" ]]; then
+		echo "The \"${readme_file}\" file already exists! Aborting." >&2
+		echo "You can use \"--force\" to override this check." >&2
+		exit 1
+	fi
+
+	cat >"${readme_file}" <<-EOF
+		# $1
+
+		...
+
+		## Role Variables
+
+	EOF
+
+	# Detect role variables.
+	if grep -Ec '^[a-z].*:' "${roles_d}/defaults/"*.yml >/dev/null 2>&1; then
+		# Some role variables found.
+		grep -E '^[a-z].*:' "${roles_d}/defaults/"*.yml \
+			| cut -d: -f1 | sort -u | while read -r var
+		do
+			echo "- \`$var\`:" >>"${readme_file}"
+		done
+	else
+		# No role variables found.
+		echo "None." >>"${readme_file}"
+	fi
+
+	cat >>"${readme_file}" <<-EOF
+
+		## License
+
+		MIT
+
+		## Author Information
+	EOF
+
+	printf "\nCopyright (C) %s %s\n" \
+		"$(date +%Y)" "${NAME:-$LOGNAME} <${EMAIL:-$LOGNAME@...}>." \
+		>>"${roles_d}/README.md"
+
+	echo "New \"${readme_file}\" created."
+	exit 0
+}
+
+if [[ "${1:-}" = "--force" || "${1:-}" = "-f" ]]; then
+	FORCE=1
+	shift
+fi
+
+cmd="${1:-}"
+[[ $# -gt 0 ]] && shift
+
+case "${cmd}" in
+	"readme")
+		Readme "$@"
+		;;
+	"help"|"--help")
+		Usage_Exit 0
+		;;
+	*)
+		Usage_Exit
+esac
