@@ -20,8 +20,8 @@ Usage() {
 		echo "ansible-boilerplate <command>"
 		echo
 		echo   "  help		Show this help text and exit."
-		echo   "  init		Initialize project and boilerplate code. [Alias: upgrade]"
-		echo   "  update	Update boilerplate code and dependencies. [Alias: up]"
+		echo   "  init		Initialize project and boilerplate code."
+		echo   "  update	Update boilerplate code and dependencies. [Alias: upgrade, up]"
 		echo   "    --force	Force overwriting an existing role or collection."
 		for plugin in $(Get_Plugin_Files); do
 			cmd=$(basename "${plugin}" | sed -e 's/^ab-//')
@@ -366,10 +366,10 @@ cmd="${1:-}"
 [ $# -gt 0 ] && shift
 
 case "${cmd}" in
-	"init"|"upgrade")
+	"init")
 		Init "$@"
 		;;
-	"update"|"up")
+	"upgrade"|"update"|"up")
 		Check_Project_Dir
 		Upgrade "$@"
 		;;
