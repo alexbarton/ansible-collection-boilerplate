@@ -174,7 +174,13 @@ Upgrade() {
 		# let's use a Python virtual environment!
 		echo "Using a Python virtual environment."
 		PIP="./.venv/bin/pip"
+		if ! env | grep "^ANSIBLE_GALAXY=" >/dev/null; then
+			# Override "ANSIBLE_GALAXY" variable to point to the
+			# command in the virtual environment when not already
+			# explicitly set in the environment! (So you can still
+			# override it and use some wrapper scripts ...)
 		ANSIBLE_GALAXY="./.venv/bin/ansible-galaxy"
+		fi
 		if ! [ -x .venv/bin/pip ]; then
 			echo "Initializing Python virtual environment ..."
 			"${PYTHON}" -m venv .venv
