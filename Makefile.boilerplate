@@ -60,6 +60,14 @@ distclean: distclean-ansible
 # Upgrade the project using "ansible-boilerplate upgrade" command:
 upgrade: $(SOURCE_ROOT)/bin/ansible-boilerplate
 	$(SOURCE_ROOT)/bin/ansible-boilerplate upgrade
+#	The "ansible-boilerplate upgrade" command unconditionally updates an
+#	Python virtual environment and installs/updates Python packages from a
+#	requirements.txt file when it finds one, but does not mark the Ansible
+#	tools as "current" like what we do in the "venv" target (see above).
+#	Therefore touch these files when they exist to prevent running "pip
+#	install" later on in the "venv" target by other make targets again.
+	test -x "$(VENV_BIN)/ansible" && \
+	  touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
 
 # Clean up, for example after upgrading the project.
 cleanup:
