@@ -73,7 +73,7 @@ above) or from the Ansible Galaxy repository with its default name of
 "alexbarton.boilerplate", when the environment variable is not set:
 
 ```bash
-./.venv/bin/ansible-galaxy collection install -p ansible_galaxy \
+./.venv/bin/ansible-galaxy collection install --force -p ansible_galaxy \
   "${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}"
 ```
 
