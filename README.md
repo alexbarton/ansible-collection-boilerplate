@@ -12,6 +12,17 @@ preferences: For example, a "Makefile system" is provided, but you can use this
 collection without it (and even remove the `Makefile` template from your
 project).
 
+## Features and Goals
+
+* Provide a solid and extensible base for your own Ansible project, in which
+  you can develop and deploy your own playbooks and roles, as well as include
+  other collections and roles from the Ansible Galaxy and other sources.
+* Make it easy to create and maintain an Python "virtual environment" providing
+  Ansible itself and all the required tools.
+* Optionally provide Makefile's and handy `make` targets for checking and
+  upgrading your project. But you can use this collection without `make`, too,
+  by using the included `ansible-boilerplate` script directly.
+
 ## Installation
 
 ### Prerequisites
