@@ -9,6 +9,26 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.0.0
+
+Breaking changes:
+
+- The main script (`bin/ansible-boilerplate`) was renamed to `bin/abc`, and
+  split in a "frontend" (which is to be included into dependant projects, like
+  before) and a "backend" (which is contained in the Ansible Collection only).
+- Plugins now use the `abc-` prefix (instead of `ab-`). Local plugins must be
+  renamed accordingly! All included plugins have been changed accordingly.
+- Makefile: The update target is now called "update" (no longer "upgrade").
+
+New features:
+
+- Support the `uv` tool in addition to the Python "venv" module and `pip`.
+
+Other changes:
+
+- More color in script output =:)
+- Lots of smaller bug fixes and enhancements.
+
 ## Release 1.7.0
 
 Breaking changes:

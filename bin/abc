@@ -1,0 +1,307 @@
+#!/bin/bash
+#
+# Ansible Boilerplate Collection:
+# Stub script for inclusion into dependant projects.
+#
+# This script detects (and installs, if required) the real "backend script" in
+# an installed Ansible Galaxy hierarchy and delegates all commands to it.
+#
+# If no Ansible installation is found, or it seems to be incomplete, this script
+# can prepare a Python "virtual environment" and install Ansible including the
+# required Python packages and Ansible Galaxy collections and roles.
+#
+
+set -eu -o pipefail
+
+# Initialize global environment:
+
+# Set some sane defaults for tools.
+# NOTE: These three variables can be pre-set in the environment ("overwritten")
+# by users, if required for the local setup.
+export ANSIBLE_GALAXY="${ANSIBLE_GALAXY:-$(command -v ansible-galaxy 2>/dev/null || echo "ansible-galaxy")}"
+export PYTHON="${PYTHON:-$(command -v python3 2>/dev/null || echo "python3")}"
+export UV="${UV:-$(command -v uv 2>/dev/null || echo "uv")}"
+
+# Path to the (probably not yet installed) Ansible Boilerplate Collection.
+export ABC_BASE_D="${ABC_BASE_D:-ansible_galaxy/ansible_collections/alexbarton/boilerplate}"
+
+# Path to the (probably not yet installed) "backend script".
+ABC_BACKEND="${ABC_BASE_D}/libexec/abc.backend"
+
+# Use a Python virtual environment?
+unset ABC_USE_VENV
+
+# Which Python "virtual environment manager" to use?
+unset ABC_VENV_MANAGER
+
+# Functions
+
+#
+# Show usage information of this stub script on stderr.
+# NOTE: This function is only used when NO backend script was found!
+#
+Usage() {
+	{
+		echo "Ansible Boilerplate Collection Helper Tool [stub script!]"
+		echo
+		printf '\e[1mUsage:\e[m abc <command>\n'
+		echo
+		echo   "  help		Show this help text and exit."
+		echo   "  init		Initialize a new Ansible project."
+		echo   "  install	Install all dependencies of the project. [Alias: activate, i]"
+		echo
+	} >&2
+	if [[ ! -e requirements.yml ]]; then
+		Usage_Hint_Init
+	elif [[ ! -d ${ABC_BASE_D} ]]; then
+		Usage_Hint_Install
+	fi
+}
+
+Usage_Hint_Init() {
+	{
+		printf 'Note: It looks like the current folder does not contain an Ansible Boilerplate\n'
+		printf 'Collection based project, because no "\e[36mrequirements.yml\e[m" file could be found.\n\n'
+		printf 'Probably you want to initialize a new project first? For example, run:\n'
+		printf '\e[32m%s init\e[m\n\n' "$0"
+	} >&2
+}
+
+Usage_Hint_Install() {
+	{
+		printf 'Note: It looks like this project was not yet installed ("activated") because\n'
+		printf 'the \e[1mAnsible Galaxy "Boilerplate" Collection\e[m could not be found.\n\n'
+		printf 'Probably you want to install this project first? For example, run:\n'
+		printf '\e[32m%s install\e[m\n\n' "$0"
+	} >&2
+}
+
+#
+# Function handling both "init" and "install" commands in the stub script.
+#
+# This _always_ handles these commands, but only implements functionality to get
+# the Ansible Boilerplate Collection installed and then calls the backend script
+# which can implement additional functionality.
+#
+# $1: The original sub-command used.
+#
+Stub_Init_Install() {
+	# Make sure "ansible-galaxy" was found and tested successfully; the
+	# test is in the main script. And show an info text if not (so far).
+	if [[ -z ${ANSIBLE_GALAXY-} ]]; then
+		echo 'No "ansible-galaxy" command found, will use a Python "virtual environment" ...'
+		export ABC_USE_VENV=1
+	fi
+
+	# Are we initializing a new project?
+	[[ $1 == "init" ]] && Stub_Init
+
+	# Check prerequisites to install the project:
+	if [[ ! -r requirements.yml ]]; then
+		Usage_Hint_Init
+		return 1
+	fi
+
+	if [[ -n ${ABC_USE_VENV} ]]; then
+		"Venv_Init_${ABC_VENV_MANAGER}" || return 1
+
+		echo "Python virtual environment ready."
+		export PYTHON="${PWD}/.venv/bin/python"
+		export ANSIBLE_GALAXY="${PWD}/.venv/bin/ansible-galaxy"
+
+		# Now we should have a working `ansible-galaxy` command.
+		if [[ ! -x ${ANSIBLE_GALAXY} ]]; then
+			printf 'A Python "virtual environment" was initialized, but the "\e[36mansible-galaxy\e[m"\n' >&2
+			printf 'command seems not be be available in it!\n' >&2
+			printf 'Did you probably forget to include "ansible-core" (or "ansible") in your\n' >&2
+			printf 'Python dependencies, like a "\e[36mrequirements.txt\e[m" file?\n' >&2
+			return 1
+		fi
+	fi
+
+	# Install all Ansible Collections, including the Boilerplate collection!
+	echo "Installing Ansible Galaxy collections ..."
+	(
+		set -x
+		"${ANSIBLE_GALAXY}" collection install -r requirements.yml
+	)
+
+	exec "${ABC_BACKEND}" __init_install "${1-}"
+	return 1
+}
+
+#
+# Initialize a new Ansible Boilerplate Collection based project in the current
+# working directory.
+#
+function Stub_Init() {
+	# Check prerequisites ...
+	if [[ -e ansible.cfg || -e requirements.yml ]]; then
+		printf 'Oops, "\e[36m%s\e[m" is not clean!\n' "${PWD}" >&2
+		printf "Can't initialize a new project here!\n" >&2
+		return 1
+	fi
+
+	printf 'Initializing a new Ansible project in "\e[36m%s\e[m" ...\n' "${PWD}"
+
+	# Make sure a minimal "ansible.cfg" file exists:
+	if [[ ! -e "ansible.cfg" ]]; then
+		printf 'Creating a minimal "\e[36mansible.cfg\e[m" file for bootstrapping ...\n'
+		cat >ansible.cfg <<-EOF
+			# ABC BOOTSTRAP ONLY!
+			[defaults]
+			collections_path = ansible_galaxy
+		EOF
+	fi
+
+	# Create a initial "requirements.yml" file:
+	if [[ ! -e "requirements.yml" ]]; then
+		printf 'Creating a new "\e[36mrequirements.yml\e[m" file ...\n'
+		cat >requirements.yml <<-EOF
+			---
+			# Ansible dependencies
+
+			collections:
+			  - name: ${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}
+			    version: ">=2.0.0"
+
+			roles:
+			  []
+		EOF
+	fi
+
+	if [[ -n ${ABC_USE_VENV} ]]; then
+		printf 'Creating a new Python "\e[36mrequirements.txt\e[m" file ...\n'
+		cat >requirements.txt <<-EOF
+			# Python dependencies
+
+			ansible-core>=2.18
+			ansible-lint>=25
+		EOF
+	fi
+}
+
+#
+# Create a Python "virtual environment" with the Python 3.x "venv" module.
+#
+# shellcheck disable=SC2317
+Venv_Init_Python() {
+	printf 'Initializing the Python "virtual environment" with the \e[1mPython "venv" module\e[m ...\n'
+	if [[ ! -r requirements.txt ]]; then
+		echo 'Oops, a Python "requirements.txt" file is required, but was not found!' >&2
+		return 1
+	fi
+	(
+		set -x
+		test -d .venv || ${PYTHON} -m venv .venv
+		./.venv/bin/pip install -U pip
+		./.venv/bin/pip install -r requirements.txt
+	)
+}
+
+#
+# Create a Python "virtual environment" with the "uv" tool.
+#
+# shellcheck disable=SC2317
+Venv_Init_UV() {
+	printf 'Initializing the Python "virtual environment" with the \e[1m"uv" tool\e[m ...\n'
+	# For now, a Python "requirements.txt" is required, and no other system
+	# is supported!
+	if [[ ! -r requirements.txt ]]; then
+		echo 'Oops, a Python "requirements.txt" file is required, but was not found!' >&2
+		return 1
+	fi
+	(
+		set -x
+		test -d .venv || "${UV}" venv
+		"${UV}" pip install -r requirements.txt
+	)
+}
+
+# Script initialization:
+
+# Check if there already is a Python Venv and update paths accordingly:
+unset venv_found venv_broken
+if [[ -d .venv ]]; then
+	if [[ ! -r .venv/pyvenv.cfg || ! -x .venv/bin/python ]]; then
+		echo 'Found a broken Python "virtual environment"!? Aborting!'
+		exit 1
+	fi
+	export PYTHON="${PWD}/.venv/bin/python"
+	export ANSIBLE_GALAXY="${PWD}/.venv/bin/ansible-galaxy"
+	export ABC_USE_VENV=1
+fi
+
+# Check if ansible-galaxy command is available:
+if ! "${ANSIBLE_GALAXY}" --version &>/dev/null; then
+	unset ANSIBLE_GALAXY
+	export ABC_USE_VENV=1
+fi
+
+if [[ -n ${ABC_USE_VENV} ]]; then
+	# We are using a Python Venv. But which Venv manager is available?
+	if "${UV}" --help &>/dev/null; then
+		# "uv" was detected.
+		export ABC_VENV_MANAGER="UV"
+	else
+		# Fall back to the Python "venv" module and "pip":
+		export ABC_VENV_MANAGER="Python"
+	fi
+
+fi
+
+# Debug mode:
+if [[ ${1-} == "--debug" ]]; then
+	export DEBUG=1
+	shift
+fi
+if [[ -n ${DEBUG-} ]]; then
+	export DEBUG=1
+	# Show environment ...
+	for var in \
+		0 PWD PYTHON ANSIBLE_GALAXY UV \
+		ABC_BASE_D ABC_BACKEND ABC_USE_VENV ABC_VENV_MANAGER; do
+		eval 'echo " - ${var} is \"${'"${var}"':-"(unset)"}\"."'
+	done
+	echo
+fi
+
+# The first half of the "install" command is handled by this script: so we
+# have to check for this first!
+case "${1-}" in
+"init" | "install" | "activate" | "i")
+	if [[ -e Makefile.boilerplate ]]; then
+		# This fragment is called in the Ansible Boilerplate
+		# Collection itself. But in this case, we only need to
+		# initialize the Python virtual environment:
+		"Venv_Init_${ABC_VENV_MANAGER}"
+		exit 0
+	elif [[ $# -eq 1 ]]; then
+		Stub_Init_Install "${1}"
+	else
+		Usage
+		exit 1
+	fi
+	;;
+*)
+	# Continue ...
+	;;
+esac
+
+# Look for the backend script and call into it, when available.
+if [[ -x ${ABC_BACKEND} ]]; then
+	exec "${ABC_BACKEND}" "$@"
+	exit 1
+fi
+
+# No backend script found! Handle the usage info ourself:
+case "${1-}" in
+"help" | "--help")
+	Usage
+	;;
+*)
+	Usage
+	exit 1
+	;;
+esac
+exit $?

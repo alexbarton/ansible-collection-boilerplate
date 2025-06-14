@@ -1,0 +1,377 @@
+#!/bin/bash
+#
+# Ansible Boilerplate Collection:
+# Backend script which implements most functionality. Not to be included in
+# dependant projects! It is automatically called by the "stub script".
+#
+
+set -eu -o pipefail
+
+# Detect commands to use:
+export ANSIBLE_GALAXY="${ANSIBLE_GALAXY:-$(command -v ansible-galaxy 2>/dev/null || echo "ansible-galaxy")}"
+export PYTHON="${PYTHON:-$(command -v python3 2>/dev/null || echo "python3")}"
+export UV="${UV:-$(command -v uv 2>/dev/null || echo "uv")}"
+
+if [[ -z "${ABC_BASE_D:-}" || ! -d "${ABC_BASE_D}" ]]; then
+	echo "Oops, ABC_BASE_D is unset or invalid: \"${ABC_BASE_D:-}\"!" >&2
+	echo "This indicates a broken setup, aborting!" >&2
+	exit 1
+fi
+
+#
+# Show usage information on stderr.
+#
+Usage() {
+	{
+		echo "Ansible Boilerplate Collection Helper Tool"
+		echo
+		printf '\e[1mUsage:\e[m abc <command> {help|<arguments ...>}\n'
+		echo
+		{
+			set +o pipefail
+			echo   "  help		Show this help text and exit."
+			echo   "  init		Initialize a new Ansible project."
+			echo   "  install	Install all dependencies of the project. [Alias: activate, i]"
+			echo   "  update	Update boilerplate code and dependencies. [Alias: upgrade, up]"
+			for plugin in $(Get_Plugin_Files); do
+				cmd=$(basename "${plugin}" | sed -e 's/^abc-//')
+				description=$(grep -F '# description=' "${plugin}" | cut -d= -f2- )
+				[[ ${#cmd} -lt 6 ]] && cmd="${cmd}\t"
+				printf "  ${cmd}	%s\n" "${description:-(no description found)}"
+			done
+		} | sort -u
+		echo
+		echo "Pass --help to individual sub-commands to see their help."
+		echo
+	} >&2
+}
+
+#
+# Show some hints when a new project was successfully initialized.
+#
+Usage_Hint_Initialized() {
+	printf '\n\e[32;1mYour new project was initialized successfully.\e[m\n\n'
+	if command -v git &>/dev/null && [[ ! -d .git ]]; then
+		echo 'Looks like you have "git" installed. Probably you want to initialize a new Git'
+		echo 'repository, add all generated files and create your initial commit? If so, run:'
+		printf '\e[32mgit init && git add . && git commit -m "Initial commit"\e[m\n'
+	fi
+	echo
+}
+
+#
+# Check that we are in the project root directory.
+#
+Check_Project_Dir() {
+	[[ -r ansible.cfg ]] && return 0
+
+	# Oops, not in an Ansible project root directory!?
+	echo "Oops, looks like \"$PWD\" is not an Ansible project directory!?" >&2
+	if [[ -x ./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec/abc-init ]]; then
+		echo "You can initialize a new project with the following command:" >&2
+		echo "  ${0} init" >&2
+	else
+		echo "Probably you have not initialized it yet?" >&2
+	fi
+	echo "Aborting." >&2
+	exit 1
+}
+
+#
+# Get all plugin file names.
+#
+# This function returns a newline separated list of full path names of all
+# found plugins, including the "abc-" prefix.
+#
+# $1: Explicit plugin name to search for, _without_ the "abc-" prefix! When
+#     given, exactly 0 or 1 (the 1st) results are returned, even when a
+#     matching plugin can be found in more than one plugin directories.
+#
+Get_Plugin_Files() {
+	[[ -z "${1:-}" ]] && max=9999 || max=1
+	(
+		find \
+			./libexec \
+			/usr/local/libexec/ansible-boilerplate/ \
+			/usr/local/lib/ansible-boilerplate/ \
+			"${ABC_BASE_D}/libexec" \
+			/usr/libexec/ansible-boilerplate/ \
+			-type f \( -perm -u=x -o -perm -g=x -o -perm -o=x \) \
+			-name "abc-${1:-*}" 2>/dev/null \
+			|| true
+	) | head -n "${max}"
+}
+
+#
+# Internal "Install" command of the backend.
+#
+Backend_Install() {
+	# Install Ansible Galaxy roles.
+	# Note: Collections have already been installed by the stub script!
+	echo "Installing Ansible Galaxy roles ..."
+	(
+		set -x
+		"${ANSIBLE_GALAXY}" role install -r requirements.yml
+	)
+
+	mkdir -p bin
+
+	if [[ ! -x bin/abc ]] || ! cmp "${ABC_BASE_D}/bin/abc" bin/abc; then
+		printf 'Installing the "\e[36mabc\e[m" tool into the project:\n'
+		cp -av "${ABC_BASE_D}/bin/abc" bin/abc
+	else
+		printf 'The "\e[36mabc\e[m" tool in the project is up-to-date.\n'
+	fi
+
+	echo "Creating symbolic links to files inside of the Boilerplate Collection ..."
+	for file in \
+		bin/a \
+		bin/ap \
+		bin/aps \
+	; do
+		# Create (new) symbolic links, when the target already is a symbolic link or
+		# does not yet exists. Don't overwrite existing regular files etc.!
+		if [[ ! -e "${file}" || -L "${file}" ]]; then
+			if [[ ! "${ABC_BASE_D}/${file}" -ef "${file}" ]]; then
+				# Links are different or do not yet exist:
+				ln -fsv "../${ABC_BASE_D}/${file}" "${file}"
+			fi
+		fi
+	done
+}
+
+#
+# Internal "Init" command of the backend.
+#
+Backend_Init() {
+	echo "Initializing files and directories ..."
+	for file in \
+		README.md \
+		LICENSE \
+	; do
+		test -e "${file}" || touch "${file}"
+	done
+	mkdir -p .vscode playbooks roles
+
+	echo 'Creating "hosts.ini" ...'
+	cat >hosts.ini <<-EOF
+	# Ansible hosts list
+
+	[all_managed]
+	localhost
+	EOF
+
+	Create_Makefile
+}
+
+#
+# Crate the project Makefile
+#
+Create_Makefile() {
+	echo 'Creating "Makefile" ...'
+	cat >Makefile <<EOF
+#
+# Makefile
+#
+
+SOURCE_ROOT ?= \$(CURDIR)
+
+# Make sure that the Ansible Boilerplate Collection project is set up (its
+# files are "available"), and install it if not!
+_DUMMY := \$(shell test -e ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate || bin/abc install >&2)
+
+default: all
+
+# Include the Ansible Boilerplate Collection Makefile fragment:
+include ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate
+
+all:
+
+check:
+
+install:
+
+clean:
+	rm -frv \$(SOURCE_ROOT)/.cache
+
+distclean: clean
+
+maintainer-clean: distclean
+
+.PHONY: default all check install clean distclean maintainer-clean
+EOF
+}
+
+#
+# Update command.
+#
+# [$1]: If set to "--force", this is passed to ansible-galaxy commands.
+#
+Update() {
+	if [[ -r "requirements.yml" ]]; then
+		echo "Updating Ansible Galaxy collections & roles ..."
+		(
+			set -x
+			# shellcheck disable=SC2086
+			"${ANSIBLE_GALAXY}" collection install -U -r requirements.yml ${1}
+			# shellcheck disable=SC2086
+			"${ANSIBLE_GALAXY}" role install -r requirements.yml ${1}
+		)
+	else
+		printf '\e[33mWarning:\e[m No "\e[36mrequirements.yml\e[m" file found! Not updating Ansible Galaxy collections and roles!\n'
+	fi
+
+	# Update files included in the Boilerplate Connection first:
+	Update_ABC
+
+	# Update Python Venv
+	if [[ -n ${ABC_USE_VENV} ]]; then
+		"Venv_Update_${ABC_VENV_MANAGER}" || return 1
+	fi
+}
+
+#
+# Update files from the Ansible Boilerplate Collection in the project.
+#
+# [$1]: If set to "--init", this function is called during initialization of a
+#       new project and all template files should be created if they do not yet
+#       exist.
+#
+Update_ABC() {
+	# Clean up the preliminary "ansible.cfg" file created during "init" by
+	# the stub script:
+	if grep -Fq 'ABC BOOTSTRAP ONLY' ansible.cfg 2>/dev/null; then
+		echo 'Removing preliminary "ansible.cfg" file ...'
+		rm -f ansible.cfg
+	fi
+
+	if [[ ${1-} == "--init" ]]; then
+		echo "Initializing template files from the Boilerplate Collection ..."
+	else
+		echo "Upgrading template files from the Boilerplate Collection ..."
+	fi
+	for file in \
+		.ansible-lint \
+		.editorconfig \
+		.gitignore \
+		.vscode/settings.json \
+		.yamllint.yml \
+		ansible.cfg \
+	; do
+		Update_Template_File "${file}" "${1-}"
+	done
+}
+
+#
+# Upgrade a template file.
+#
+# When $2 is not set to "--init", only already existing files are checked.
+#
+# $1:   Template file name.
+# [$2]: If set to "--init", this function is called during initialization of a
+#       new project and all template files should be created if they do not yet
+#       exist.
+#
+Update_Template_File() {
+	# Does the target directory exist? Skip this template file if not!
+	[[ -d "$(dirname "$1")" ]] || return 0
+
+	# Return when the target file does not exist and not in "init mode":
+	[[ ! -e "$1" && "${2:-}" != "--init" ]] && return 0
+
+	# Remove the target when it is a symbolic link.
+	[[ -L "$1" ]] && rm -v "$1"
+
+	if [[ ! -e "$1" ]]; then
+		# Target does not yet exist: install it!
+		install -b -m 0644 -p -v "${ABC_BASE_D}/$1" "$1"
+		return $?
+	fi
+
+	# Target already exists. Is it different?
+	if ! cmp -s "$1" "${ABC_BASE_D}/$1"; then
+		# Files are not the same! Install new version in parallel:
+		install -b -m 0644 -p -v "${ABC_BASE_D}/$1" "$1.new"
+	fi
+}
+
+#
+# Update a Python "virtual environment" with the Python 3.x "venv" module.
+#
+# shellcheck disable=SC2317
+Venv_Update_Python() {
+	printf 'Updating the Python "virtual environment" with the \e[1mPython "venv" module\e[m ...\n'
+	if [[ ! -r requirements.txt ]]; then
+		echo 'Oops, a Python "requirements.txt" file is required, but was not found!' >&2
+		return 1
+	fi
+	(
+		set -x
+		test -d .venv || ${PYTHON} -m venv .venv
+		./.venv/bin/pip install -U pip
+		./.venv/bin/pip install -U -r requirements.txt
+	)
+}
+
+#
+# Update a Python "virtual environment" with the "uv" tool.
+#
+# shellcheck disable=SC2317
+Venv_Update_UV() {
+	printf 'Updating the Python "virtual environment" with the \e[1m"uv" tool\e[m ...\n'
+	# For now, a Python "requirements.txt" is required, and no other system
+	# is supported!
+	if [[ ! -r requirements.txt ]]; then
+		echo 'Oops, a Python "requirements.txt" file is required, but was not found!' >&2
+		return 1
+	fi
+	(
+		set -x
+		test -d .venv || "${UV}" venv
+		"${UV}" pip install -U -r requirements.txt
+	)
+}
+
+cmd="${1:-}"
+[[ $# -gt 0 ]] && shift
+
+case "${cmd}" in
+	"__init_install")
+		Check_Project_Dir
+		if [[ "${1:-}" == "init" ]]; then
+			Backend_Init
+			Update_ABC --init
+		fi
+		Backend_Install
+		if [[ "${1:-}" == "init" ]]; then
+			Usage_Hint_Initialized
+		fi
+		;;
+	"help"|"--help")
+		Usage
+		;;
+	"update"|"upgrade"|"up")
+		if [[ "${1-}" != "" && "${1-}" != "--force" || $# -gt 1 ]]; then
+			Usage
+			exit 1
+		fi
+		Check_Project_Dir
+		Update "${1-}"
+		;;
+	"")
+		Usage
+		exit 1
+		;;
+	*)
+		# Look for a plugin:
+		Check_Project_Dir
+		cmd_file=$(Get_Plugin_Files "${cmd}") || true
+		if [ -x "${cmd_file}" ]; then
+			exec "${cmd_file}" "$@" || exit 1
+		fi
+
+		# No plugin found, subcommand is unknown!
+		Usage
+		exit 1
+esac
+exit $?

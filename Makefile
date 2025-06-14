@@ -27,9 +27,9 @@ check-mdl:
 
 check-shellcheck:
 	shellcheck \
-	 bin/ansible-boilerplate \
+	 bin/abc \
 	 bin/a bin/ap bin/aps \
-	 libexec/ab-*
+	 libexec/abc*
 
 install:
 
@@ -55,4 +55,4 @@ distcheck: dist
 #	Clean up ...
 	rm -fr "$(DIST_D)/check"
 
-.PHONY: default all check install clean distclean maintainer-clean dist distcheck
+.PHONY: all check install clean distclean maintainer-clean dist distcheck
