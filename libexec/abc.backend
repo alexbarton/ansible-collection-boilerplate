@@ -180,22 +180,15 @@ SOURCE_ROOT ?= \$(CURDIR)
 # files are "available"), and install it if not!
 _DUMMY := \$(shell test -e ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate || bin/abc install >&2)
 
-default: all
+all:
 
 # Include the Ansible Boilerplate Collection Makefile fragment:
 include ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate
 
-all:
-
 check:
-
 install:
-
 clean:
-	rm -frv \$(SOURCE_ROOT)/.cache
-
 distclean: clean
-
 maintainer-clean: distclean
 
 .PHONY: default all check install clean distclean maintainer-clean

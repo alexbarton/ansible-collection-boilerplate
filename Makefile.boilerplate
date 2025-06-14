@@ -23,6 +23,10 @@ endif
 	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
 	@echo
 
+clean-ansible:
+#	Remove the cache directory.
+	rm -frv $(SOURCE_ROOT)/.cache
+
 distclean-ansible:
 #	Remove Python "virtual environment" ...
 	rm -fr "$(SOURCE_ROOT)"/.venv
@@ -51,6 +55,7 @@ ifneq ($(patsubst %..,,$(lastword $(SOURCE_ROOT))),)
 
 all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
 check: check-ansible
+clean: clean-ansible
 distclean: distclean-ansible
 
 update: $(SOURCE_ROOT)/bin/abc
