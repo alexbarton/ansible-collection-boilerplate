@@ -22,6 +22,8 @@ case "${1:-}" in
 	"help"|"--help")
 		Usage_Exit 0
 		;;
+	*)
+		# Continue!
 esac
 
 # Change working directory to the base directory ...

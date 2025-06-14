@@ -53,7 +53,7 @@ Readme() {
 		grep -E '^[a-z].*:' "${roles_d}/defaults/"*.yml \
 			| cut -d: -f1 | sort -u | while read -r var
 		do
-			echo "- \`$var\`:" >>"${readme_file}"
+			echo "- \`${var}\`:" >>"${readme_file}"
 		done
 	else
 		# No role variables found.
@@ -70,7 +70,7 @@ Readme() {
 	EOF
 
 	printf "\nCopyright (C) %s %s\n" \
-		"$(date +%Y)" "${NAME:-$LOGNAME} <${EMAIL:-$LOGNAME@...}>." \
+		"$(date +%Y || true)" "${NAME:-${LOGNAME}} <${EMAIL:-${LOGNAME}@...}>." \
 		>>"${roles_d}/README.md"
 
 	echo "New \"${readme_file}\" created."

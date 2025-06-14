@@ -37,9 +37,9 @@ Role() {
 	for d in meta defaults tasks; do
 		mkdir -pv "${roles_d}/${d}"
 		main_yml="${roles_d}/${d}/main.yml"
-		if [[ ! -e "$main_yml" ]]; then
-			echo "---" >"$main_yml"
-			echo "# ${d} file for ${1}" >>"$main_yml"
+		if [[ ! -e "${main_yml}" ]]; then
+			echo "---" >"${main_yml}"
+			echo "# ${d} file for ${1}" >>"${main_yml}"
 		fi
 	done
 
@@ -47,7 +47,7 @@ Role() {
 	cat >"${roles_d}/meta/main.yml" <<-EOF
 		---
 		galaxy_info:
-		  author: ${NAME:-$LOGNAME}
+		  author: ${NAME:-${LOGNAME}}
 		  description: ...
 		  license: MIT
 
@@ -95,7 +95,7 @@ Role() {
 		## Author Information
 	EOF
 	printf "\nCopyright (C)%s %s" \
-		"$(date +%Y)" "${NAME:-$LOGNAME} <${EMAIL:-$LOGNAME@...}>.\n" \
+		"$(date +%Y || true)" "${NAME:-${LOGNAME}} <${EMAIL:-${LOGNAME}@...}>.\n" \
 		>>"${roles_d}/README.md"
 
 	echo "Role \"$1\" created in \"${roles_d}\"."
