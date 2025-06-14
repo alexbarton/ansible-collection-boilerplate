@@ -94,8 +94,8 @@ Role() {
 
 		## Author Information
 	EOF
-	printf "\nCopyright (C)%s %s" \
-		"$(date +%Y || true)" "${NAME:-${LOGNAME}} <${EMAIL:-${LOGNAME}@...}>.\n" \
+	printf "\nCopyright (C)%s %s <%s>.\n" \
+		"$(date +%Y || true)" "${NAME:-${LOGNAME}}" "${EMAIL:-${LOGNAME}@...}" \
 		>>"${roles_d}/README.md"
 
 	echo "Role \"$1\" created in \"${roles_d}\"."
