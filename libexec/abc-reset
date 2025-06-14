@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Ansible Boilerplate Collection:
+# Reset the project.
+#
+# description=Reset project, remove 3rd-party dependencies.
+#
+
+set -euo pipefail
+
+# Show usage information on stderr.
+#
+Usage_Exit() {
+	{
+		echo "ansible-boilerplate reset"
+		echo
+	} >&2
+	exit "${1:-1}"
+}
+
+[[ "${1-}" == "help" || "${1-}" == "--help" ]] && Usage_Exit 0
+[[ $# -eq 0 ]] || Usage_Exit 1
+
+echo "Removing directory trees ..."
+rm -fr \
+	.cache/ \
+	.venv/ \
+	ansible_galaxy/ansible_collections \
+	ansible_galaxy/ansible_roles
+
+echo "Removing symbolic links ..."
+for file in \
+	bin/a \
+	bin/ap \
+	bin/aps \
+; do
+	test -h "${file}" && rm -fv "${file}"
+done
+
+echo "Clean up empty directories ..."
+find ansible_galaxy -depth -type d -empty -print -delete || true
