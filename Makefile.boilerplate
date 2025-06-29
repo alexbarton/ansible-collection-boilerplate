@@ -10,15 +10,19 @@ VENV_BIN = $(VENV_D)/bin
 check-ansible: $(VENV_BIN)/ansible-lint
 #	Check Ansible executable ...
 	"$(VENV_BIN)"/ansible --version
+	@echo
 #	Run ansible-playbook syntax check, when a "site play" is found ...
 ifneq ("$(wildcard playbooks/site.yml)","")
 	"$(VENV_BIN)"/ansible-playbook --syntax-check playbooks/site.yml
+	@echo
 endif
 ifneq ("$(wildcard site.yml)","")
 	"$(VENV_BIN)"/ansible-playbook --syntax-check site.yml
+	@echo
 endif
 #	Run ansible-lint ...
 	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
+	@echo
 
 distclean-ansible:
 #	Remove Python "virtual environment" ...
