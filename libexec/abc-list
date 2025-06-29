@@ -22,9 +22,9 @@ Usage_Exit() {
 Hosts() {
 	[[ $# -eq 0 ]] || Usage_Exit
 
-	./bin/aps --list-hosts \
-		| sed -n -e 's/^      //p' \
-		| sort -u
+	./bin/aps --list-hosts |
+		sed -n -e 's/^      //p' |
+		sort -u
 }
 
 Plays() {
@@ -36,33 +36,34 @@ Tags() {
 	[[ $# -eq 0 ]] || Usage_Exit
 
 	(
-		find ./ -maxdepth 2 -name 'site.yml' -print0 2>/dev/null || true;
-		find ./play*/ -maxdepth 2 -name '*.yml' -a -not -name 'site.yml' 2>/dev/null | grep -Fv '/site/' | tr '\n' '\0' || true;
-		find ./ansible_galaxy/ -maxdepth 4 -name 'play*' -type d 2>/dev/null | xargs -I _ find _ -maxdepth 1 -name '*.yml' -print0 2>/dev/null;
-	) \
-		| xargs -0 -I _ ./bin/ap _ --list-tags \
-		| sed -En -e 's/.*TAGS: \[(.*)\].*/\1/gp' \
-		| sed -e 's/, /\n/g' -e '/^$/d' \
-		| sort -u
+		find ./ -maxdepth 2 -name 'site.yml' -print0 2>/dev/null || true
+		find ./play*/ -maxdepth 2 -name '*.yml' -a -not -name 'site.yml' 2>/dev/null | grep -Fv '/site/' | tr '\n' '\0' || true
+		find ./ansible_galaxy/ -maxdepth 4 -name 'play*' -type d 2>/dev/null | xargs -I _ find _ -maxdepth 1 -name '*.yml' -print0 2>/dev/null
+	) |
+		xargs -0 -I _ ./bin/ap _ --list-tags |
+		sed -En -e 's/.*TAGS: \[(.*)\].*/\1/gp' |
+		sed -e 's/, /\n/g' -e '/^$/d' |
+		sort -u
 }
 
-cmd="${1:-}"
+cmd="${1-}"
 [[ $# -gt 0 ]] && shift
 
 case "${cmd}" in
-	"hosts")
-		Hosts "$@"
-		;;
-	"plays"|"playbooks")
-		Plays "$@"
-		;;
-	"tags")
-		Tags "$@"
-		;;
-	"help"|"--help")
-		Usage_Exit 0
-		;;
-	*)
-		Usage_Exit
+"hosts")
+	Hosts "$@"
+	;;
+"plays" | "playbooks")
+	Plays "$@"
+	;;
+"tags")
+	Tags "$@"
+	;;
+"help" | "--help")
+	Usage_Exit 0
+	;;
+*)
+	Usage_Exit
+	;;
 esac
 exit $?

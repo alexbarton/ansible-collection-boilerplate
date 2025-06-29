@@ -15,15 +15,16 @@ Usage_Exit() {
 	exit "${1:-1}"
 }
 
-case "${1:-}" in
-	"")
-		Usage_Exit
-		;;
-	"help"|"--help")
-		Usage_Exit 0
-		;;
-	*)
-		# Continue!
+case "${1-}" in
+"")
+	Usage_Exit
+	;;
+"help" | "--help")
+	Usage_Exit 0
+	;;
+*)
+	# Continue!
+	;;
 esac
 
 # Change working directory to the base directory ...
