@@ -9,7 +9,7 @@ For example, it is common to use the short `.yml` extension for YAML files
 
 ### Projects
 
-Depending on the type of your project, the *Project name* is either purely
+Depending on the type of your project, the _Project name_ is either purely
 cosmetic and of "local" meaning only (e.g., when implementing an Ansible-based
 deployment) or directly linked to the name of the entity (e.g., when developing
 a stand-alone role or collection). If the latter, its name must follow the
@@ -17,9 +17,9 @@ naming conventions relevant for its type.
 
 ### Playbooks
 
-*Playbooks* are stored in YAML files on the file file system. Their names must
+_Playbooks_ are stored in YAML files on the file file system. Their names must
 consist of lowercase word characters only (i.e., the characters a-z and the
-digits 0-9) and use *snake_case* style (i.e., using underscores as word
+digits 0-9) and use _snake_case_ style (i.e., using underscores as word
 delimiters). The file extension is `.yml`.
 
 It is a good idea to store individual playbooks (if there are any), optionally
@@ -27,13 +27,13 @@ including the "site playbook" `site.yml`, in a subdirectory named `playbooks`.
 
 ### Roles and Collections
 
-*Role* and *Collection* are stored in directories on the file system
+_Role_ and _Collection_ are stored in directories on the file system
 corresponding to their names. Their names must consist of lowercase word
 characters only (i.e., the characters a-z and the digits 0-9) and use
-*snake_case* style (i.e., using underscores as word delimiters). The first
+_snake_case_ style (i.e., using underscores as word delimiters). The first
 character of a collection name must be a letter.
 
-*Note:* This is the only format supported by the "Ansible Galaxy" repository
+_Note:_ This is the only format supported by the "Ansible Galaxy" repository
 system and therefore highly recommended!
 
 It is a good idea to store individual roles in an Ansible project (which
@@ -45,9 +45,9 @@ References:
 
 ### Tasks
 
-Individual *Tasks* are stored in YAML files. Their name should start with a
-*verb* and a *capital* first letter: Use an action verb to indicate what the
-role does. For example: *"Install Apache"* or *"Configure firewall"*.
+Individual _Tasks_ are stored in YAML files. Their name should start with a
+_verb_ and a _capital_ first letter: Use an action verb to indicate what the
+role does. For example: _"Install Apache"_ or _"Configure firewall"_.
 
 There is no need to end the short task description with a period.
 

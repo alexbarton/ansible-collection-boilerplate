@@ -14,12 +14,12 @@ project).
 
 ## Features and Goals
 
-* Provide a solid and extensible base for your own Ansible project, in which
+- Provide a solid and extensible base for your own Ansible project, in which
   you can develop and deploy your own playbooks and roles, as well as include
   other collections and roles from the Ansible Galaxy and other sources.
-* Make it easy to create and maintain an Python "virtual environment" providing
+- Make it easy to create and maintain an Python "virtual environment" providing
   Ansible itself and all the required tools.
-* Optionally provide Makefile's and handy `make` targets for checking and
+- Optionally provide Makefile's and handy `make` targets for checking and
   upgrading your project. But you can use this collection without `make`, too,
   by using the included `ansible-boilerplate` script directly.
 
@@ -44,19 +44,19 @@ python3 -m venv .venv
 
 By default, the commands here in this `README.md` file as well as the scripts
 of the Ansible Boilerplate Collection assume that the code of this collection
-can be found on the *Ansible Galaxy* repository with the name
+can be found on the _Ansible Galaxy_ repository with the name
 "alexbarton.boilerplate".
 
 If you want to override this, you can set the `BOILERPLATE_COLLECTION_SRC`
 environment variable to:
 
-* a file name (including path) to a local archive file (e. g.
+- a file name (including path) to a local archive file (e. g.
   `/tmp/ansible/alexbarton-boilerplate-0.0.1.tar.gz`)
-* a path name to a local Git repository (e. g.
+- a path name to a local Git repository (e. g.
   `/usr/local/src/ansible-collection-boilerplate.git`)
-* a URL to a remote Git repository (e. g.
+- a URL to a remote Git repository (e. g.
   `git+https://my.git.server/ansible-collection-boilerplate.git`)
-* the name of a collection stored on the Ansible Galaxy (e. g.
+- the name of a collection stored on the Ansible Galaxy (e. g.
   `alexbarton.boilerplate`)
 
 Example:

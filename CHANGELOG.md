@@ -22,7 +22,7 @@ details, fixes and internal changes.
   the `ansible-galaxy` command to use ever since, but it was always reset to
   the version in a Python virtual environment when one was detected. Now, it is
   only reset to the version in a virtual environment when the `ANSIBLE_GALAXY`
-  variable was *not* explicitly set in the environment.
+  variable was _not_ explicitly set in the environment.
 
 ## Release 1.5.0 (2024-12-29)
 
@@ -55,14 +55,14 @@ details, fixes and internal changes.
 - Show help for plugin commands.
 - Look for plugins in more places:
     1. Plugins in the local project:
-        `./libexec`
+       `./libexec`
     2. Local system-wide plugins:
-        `/usr/local/libexec/ansible-boilerplate/` and
-        `/usr/local/lib/ansible-boilerplate/`
+       `/usr/local/libexec/ansible-boilerplate/` and
+       `/usr/local/lib/ansible-boilerplate/`
     3. Plugins from the local "boilerplate" Ansible Galaxy collection:
-        `./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec`
+       `./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec`
     4. System-wide plugins:
-        `/usr/libexec/ansible-boilerplate/`
+       `/usr/libexec/ansible-boilerplate/`
 
 ## Release 1.2.0 (2024-08-22)
 
