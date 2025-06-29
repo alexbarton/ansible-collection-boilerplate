@@ -40,6 +40,11 @@ $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(
 	"$(SOURCE_ROOT)/bin/abc" install
 	touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
 
+ifneq ("$(wildcard requirements.yml)","")
+# Add dependency on requirements.yml, when it exists:
+$(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint: $(SOURCE_ROOT)/requirements.yml
+endif
+
 .PHONY: venv
 
 ifneq ($(patsubst %..,,$(lastword $(SOURCE_ROOT))),)
