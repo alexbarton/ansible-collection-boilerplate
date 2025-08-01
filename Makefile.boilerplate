@@ -67,7 +67,7 @@ update: $(SOURCE_ROOT)/bin/abc
 
 # Clean up, for example after upgrading the project.
 cleanup:
-	find $(SOURCE_ROOT) \( -name '*.old' -o -name '*.new' \) -exec rm -iv {} \;
+	find $(SOURCE_ROOT) \( -name '*.old*' -o -name '*.new*' \) -exec rm -iv {} \;
 
 .PHONY: all check distclean update cleanup
 endif
