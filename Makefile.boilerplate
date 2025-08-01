@@ -19,6 +19,9 @@ ifneq ("$(wildcard site.yml)","")
 	"$(VENV_BIN)"/ansible-playbook --syntax-check site.yml
 	@echo
 endif
+#	Check ansible-lint executable ...
+	"$(VENV_BIN)"/ansible-lint --version
+	@echo
 #	Run ansible-lint ...
 	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
 	@echo
