@@ -38,7 +38,19 @@ else
 	bin/abc reset
 endif
 
+$(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv:
+ifneq ("$(wildcard requirements.txt)","")
+# Add dependency on requirements.txt, when it exists:
 $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(SOURCE_ROOT)/requirements.txt
+endif
+ifneq ("$(wildcard pyproject.toml)","")
+# Add dependency on pyproject.toml, when it exists:
+$(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(SOURCE_ROOT)/pyproject.toml
+endif
+ifneq ("$(wildcard uv.lock)","")
+# Add dependency on uv.lock, when it exists:
+$(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(SOURCE_ROOT)/uv.lock
+endif
 #	Install the project.
 	"$(SOURCE_ROOT)/bin/abc" install
 	touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"

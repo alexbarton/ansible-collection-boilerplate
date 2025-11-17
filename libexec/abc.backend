@@ -312,17 +312,24 @@ Venv_Update_Python() {
 # shellcheck disable=SC2329
 Venv_Update_UV() {
 	printf 'Updating the Python "virtual environment" with the \e[1m"uv" tool\e[m ...\n'
-	# For now, a Python "requirements.txt" is required, and no other system
-	# is supported!
-	if [[ ! -r requirements.txt ]]; then
-		echo 'Oops, a Python "requirements.txt" file is required, but was not found!' >&2
-		return 1
+	if [[ -r pyproject.toml ]]; then
+		echo 'Found a "pyproject.toml" file, upgrading dependencies ...'
+		(
+			set -x
+			"${UV}" sync --upgrade
+		)
+		return $?
+	elif [[ -r requirements.txt ]]; then
+		echo 'Found a "requirements.txt" file, upgrading requirements ...'
+		(
+			set -x
+			test -d .venv || "${UV}" venv
+			"${UV}" pip install -U -r requirements.txt
+		)
+		return $?
 	fi
-	(
-		set -x
-		test -d .venv || "${UV}" venv
-		"${UV}" pip install -U -r requirements.txt
-	)
+	echo 'Oops, either a Python "pyproject.toml" or "requirements.txt" file is required, but none was found!' >&2
+	return 1
 }
 
 cmd="${1:-}"

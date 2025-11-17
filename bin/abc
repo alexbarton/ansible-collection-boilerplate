@@ -170,7 +170,16 @@ function Stub_Init() {
 		EOF
 	fi
 
-	if [[ -n ${ABC_USE_VENV} ]]; then
+	[[ -n ${ABC_USE_VENV} ]] || return
+
+	if [[ "$ABC_VENV_MANAGER" == "UV" ]]; then
+		printf 'Initializing a new Python project ...\n'
+		(
+			set -x
+			"${UV}" init -p "${PYTHON}" --bare
+			"${UV}" add 'ansible-core>=2.18.6' 'ansible-lint>=25'
+		)
+	else
 		printf 'Creating a new Python "\e[36mrequirements.txt\e[m" file ...\n'
 		cat >requirements.txt <<-EOF
 			# Python dependencies
@@ -193,7 +202,7 @@ Venv_Init_Python() {
 	fi
 	(
 		set -x
-		test -d .venv || ${PYTHON} -m venv .venv
+		test -d .venv || "${PYTHON}" -m venv .venv
 		./.venv/bin/pip install -U pip
 		./.venv/bin/pip install -r requirements.txt
 	)
@@ -205,17 +214,24 @@ Venv_Init_Python() {
 # shellcheck disable=SC2329
 Venv_Init_UV() {
 	printf 'Initializing the Python "virtual environment" with the \e[1m"uv" tool\e[m ...\n'
-	# For now, a Python "requirements.txt" is required, and no other system
-	# is supported!
-	if [[ ! -r requirements.txt ]]; then
-		echo 'Oops, a Python "requirements.txt" file is required, but was not found!' >&2
-		return 1
+	if [[ -r pyproject.toml ]]; then
+		echo 'Found a "pyproject.toml" file, synchronizing it ...'
+		(
+			set -x
+			"${UV}" sync
+		)
+		return $?
+	elif [[ -r requirements.txt ]]; then
+		echo 'Found a "requirements.txt" file, installing requirements ...'
+		(
+			set -x
+			test -d .venv || "${UV}" venv
+			"${UV}" pip install -r requirements.txt
+		)
+		return $?
 	fi
-	(
-		set -x
-		test -d .venv || "${UV}" venv
-		"${UV}" pip install -r requirements.txt
-	)
+	echo 'Oops, either a Python "pyproject.toml" or "requirements.txt" file is required, but none was found!' >&2
+	return 1
 }
 
 # Script initialization:
