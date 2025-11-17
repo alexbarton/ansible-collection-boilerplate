@@ -21,9 +21,9 @@
         - facts
         - packages
       ansible.builtin.package_facts:
-        manager: "{{ ansible_pkg_mgr }}"
+        manager: "{{ ansible_facts['pkg_mgr'] }}"
       when:
-        - ansible_pkg_mgr in [
+        - ansible_facts['pkg_mgr'] in [
             "apk",
             "apt",
             "pacman",
