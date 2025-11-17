@@ -291,7 +291,7 @@ Update_Template_File() {
 #
 # Update a Python "virtual environment" with the Python 3.x "venv" module.
 #
-# shellcheck disable=SC2317
+# shellcheck disable=SC2329
 Venv_Update_Python() {
 	printf 'Updating the Python "virtual environment" with the \e[1mPython "venv" module\e[m ...\n'
 	if [[ ! -r requirements.txt ]]; then
@@ -309,7 +309,7 @@ Venv_Update_Python() {
 #
 # Update a Python "virtual environment" with the "uv" tool.
 #
-# shellcheck disable=SC2317
+# shellcheck disable=SC2329
 Venv_Update_UV() {
 	printf 'Updating the Python "virtual environment" with the \e[1m"uv" tool\e[m ...\n'
 	# For now, a Python "requirements.txt" is required, and no other system
