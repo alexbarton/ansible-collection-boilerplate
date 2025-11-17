@@ -2,7 +2,7 @@
 # Connect to a system and gather Ansible "facts" and "package facts" on it.
 #
 # Example:
-# ./bin/ap get-facts -l example.host.name
+# ./bin/ap get_facts -l example.host.name
 #
 
 - name: Get Ansible host and package facts
