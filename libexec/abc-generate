@@ -12,11 +12,42 @@ Usage_Exit() {
 	{
 		echo "ansible-boilerplate generate [--force|-f] <subcommand>"
 		echo
+		echo   "  makefile	Create a toplevel Makefile for this project"
 		echo   "  readme <role>	Create a README.md file for a role"
 		echo
 		echo
 	} >&2
 	exit "${1:-1}"
+}
+
+Makefile() {
+	[[ $# -eq 0 ]] || Usage_Exit
+
+	if [[ -e Makefile && -z ${FORCE-} ]]; then
+		echo "A 'Makefile' already exists. Echoing what needs to be added:"
+		echo "---"
+		local makefile_f="/dev/stdout"
+	else
+		echo 'Creating "Makefile" ...'
+		local makefile_f="Makefile"
+	fi
+
+	cat >"${makefile_f}" <<-EOF
+		#
+		# Makefile
+		#
+
+		# Make sure that the Ansible Boilerplate Collection project is set up (its
+		# files are "available"), and install it if not!
+		_ABC_ := \$(shell test -e ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate || bin/abc install >&2)
+
+		# Include the Ansible Boilerplate Collection Makefile fragment:
+		include ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate
+
+		# Add local additions below ...
+	EOF
+
+	[[ "${makefile_f}" = "Makefile" ]] || echo "---"
 }
 
 Readme() {
@@ -86,6 +117,9 @@ cmd="${1-}"
 [[ $# -gt 0 ]] && shift
 
 case "${cmd}" in
+"makefile")
+	Makefile "$@"
+	;;
 "readme")
 	Readme "$@"
 	;;

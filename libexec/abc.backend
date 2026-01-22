@@ -173,31 +173,7 @@ Backend_Init() {
 # Crate the project Makefile
 #
 Create_Makefile() {
-	echo 'Creating "Makefile" ...'
-	cat >Makefile <<EOF
-#
-# Makefile
-#
-
-SOURCE_ROOT ?= \$(CURDIR)
-
-# Make sure that the Ansible Boilerplate Collection project is set up (its
-# files are "available"), and install it if not!
-_DUMMY := \$(shell test -e ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate || bin/abc install >&2)
-
-all:
-
-# Include the Ansible Boilerplate Collection Makefile fragment:
-include ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate
-
-check:
-install:
-clean:
-distclean: clean
-maintainer-clean: distclean
-
-.PHONY: default all check install clean distclean maintainer-clean
-EOF
+	"${ABC_BASE_D}/libexec/abc-generate" makefile
 }
 
 #
