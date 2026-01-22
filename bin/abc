@@ -121,10 +121,16 @@ Stub_Init_Install() {
 
 	# Install all Ansible Collections, including the Boilerplate collection!
 	echo "Installing Ansible Galaxy collections ..."
-	(
+	if ! (
 		set -x
 		"${ANSIBLE_GALAXY}" collection install -r requirements.yml
-	)
+	); then
+		printf '\n\e[31mError!\e[m Installing the required Ansible Collections failed! Please check the\n' >&2
+		printf 'error messages above for details!\n' >&2
+		printf 'Note: Most probably your current work directory is in a dirty state now and you\n' >&2
+		printf 'need to clean it up before re-running this command :-(\n\n' >&2
+		return 1
+	fi
 
 	exec "${ABC_BACKEND}" __init_install "${1-}"
 	return 1
