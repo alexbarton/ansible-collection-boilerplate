@@ -4,8 +4,6 @@
 
 DIST_D = $(CURDIR)/dist
 
-default: all
-
 # Include the "real" boilerplate Makefile into this "wrapper" Makefile:
 include Makefile.boilerplate
 
@@ -31,15 +29,9 @@ check-shellcheck:
 	 bin/a bin/ap bin/aps \
 	 libexec/abc*
 
-install:
-
-clean:
-
-distclean: clean distclean-ansible
+distclean:
 #	Remove distribution directory
 	rm -fr "$(DIST_D)"
-
-maintainer-clean: distclean
 
 dist: all $(VENV_BIN)/ansible-galaxy
 #	Create distribution archive ...
@@ -55,4 +47,5 @@ distcheck: dist
 #	Clean up ...
 	rm -fr "$(DIST_D)/check"
 
-.PHONY: all check install clean distclean maintainer-clean dist distcheck
+.PHONY: check check-mdl check-shellcheck
+.PHONY: distclean dist distcheck

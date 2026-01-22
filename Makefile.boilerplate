@@ -6,6 +6,33 @@ SOURCE_ROOT ?= $(CURDIR)
 VENV_D = $(SOURCE_ROOT)/.venv
 VENV_BIN = $(VENV_D)/bin
 
+all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
+
+check: check-ansible
+
+clean: clean-ansible
+distclean: clean distclean-ansible
+maintainer-clean: distclean
+
+.PHONY: all check clean distclean maintainer-clean
+
+ifneq ($(patsubst %..,,$(lastword $(SOURCE_ROOT))),)
+# SOURCE_ROOT does not end in "..", so looks like this Makefile fragment is
+# included in the top-level Makefile. Add some targets for dependant projects:
+
+update: $(SOURCE_ROOT)/bin/abc
+#	Update the project.
+	$(SOURCE_ROOT)/bin/abc update
+	touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
+
+# Clean up, for example after upgrading the project.
+cleanup:
+	find $(SOURCE_ROOT) \( -name '*.old*' -o -name '*.new*' \) -exec rm -iv {} \;
+
+.PHONY: update cleanup
+
+endif
+
 check-ansible: $(VENV_BIN)/ansible-lint
 #	Check Ansible executable ...
 	"$(VENV_BIN)"/ansible --version
@@ -60,26 +87,4 @@ ifneq ("$(wildcard requirements.yml)","")
 $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint: $(SOURCE_ROOT)/requirements.yml
 endif
 
-.PHONY: venv
-
-ifneq ($(patsubst %..,,$(lastword $(SOURCE_ROOT))),)
-# SOURCE_ROOT does not end in "..", so looks like this Makefile fragment is
-# included in the top-level Makefile. So add some proprietary targets to the
-# "common" toplevel targets:
-
-all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
-check: check-ansible
-clean: clean-ansible
-distclean: distclean-ansible
-
-update: $(SOURCE_ROOT)/bin/abc
-#	Update the project.
-	$(SOURCE_ROOT)/bin/abc update
-	touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
-
-# Clean up, for example after upgrading the project.
-cleanup:
-	find $(SOURCE_ROOT) \( -name '*.old*' -o -name '*.new*' \) -exec rm -iv {} \;
-
-.PHONY: all check distclean update cleanup
-endif
+.PHONY: check-ansible clean-ansible distclean-ansible
