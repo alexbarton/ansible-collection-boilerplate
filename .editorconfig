@@ -17,17 +17,17 @@ trim_trailing_whitespace = true
 
 # File type specific settings follow:
 
-[{bin/*,Makefile*,*.sh}]
+[{bin/*,libexec/*,Makefile*,*.cfg,*.conf,*.ini,*.sh}{,.j2}]
 # Tab indentation (8 characters wide).
 indent_style = tab
 indent_size = 8
 
-[*.{json,md}]
+[*.{json,md}{,.j2}]
 # 4 space indentation.
 indent_style = space
 indent_size = 4
 
-[*.{yaml,yml}]
+[*.{toml,yaml,yml}{,.j2}]
 # 2 space indentation.
 indent_style = space
 indent_size = 2
