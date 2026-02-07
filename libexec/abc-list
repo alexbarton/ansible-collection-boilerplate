@@ -11,7 +11,8 @@ Usage_Exit() {
 	{
 		echo "ansible-boilerplate list <subcommand>"
 		echo
-		echo   "  hosts		Show all hosts defined in the inventory"
+		echo   "  hosts [<limit_pattern>]"
+		echo   "		Show all or a subset of hosts defined in the inventory"
 		echo   "  plays		Show all available playbooks"
 		echo   "  tags		Show all tags used in the tasks"
 		echo
@@ -20,10 +21,16 @@ Usage_Exit() {
 }
 
 Hosts() {
-	[[ $# -eq 0 ]] || Usage_Exit
+	[[ $# -le 1 ]] || Usage_Exit
 
-	./bin/aps --list-hosts |
-		sed -n -e 's/^      //p' |
+	args=()
+	[[ -r .ansible-vault-secret ]] && args+=("--vault-password-file=.ansible-vault-secret")
+	[[ $# -ge 1 ]] && args+=(-l "$1")
+
+	./.venv/bin/ansible-inventory \
+		--list "${args[@]}" |
+		jq ".[].hosts" |
+		sed -Ene 's/^.*"(.*)",?/\1/p' |
 		sort -u
 }
 
