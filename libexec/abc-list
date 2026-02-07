@@ -11,6 +11,8 @@ Usage_Exit() {
 	{
 		echo "ansible-boilerplate list <subcommand>"
 		echo
+		echo   "  groups [<limit_pattern>]"
+		echo   "		Show all or a subset of host groups defined in the inventory"
 		echo   "  hosts [<limit_pattern>]"
 		echo   "		Show all or a subset of hosts defined in the inventory"
 		echo   "  plays		Show all available playbooks"
@@ -18,6 +20,20 @@ Usage_Exit() {
 		echo
 	} >&2
 	exit "${1:-1}"
+}
+
+Groups() {
+	[[ $# -le 1 ]] || Usage_Exit
+
+	args=()
+	[[ -r .ansible-vault-secret ]] && args+=("--vault-password-file=.ansible-vault-secret")
+	[[ $# -ge 1 ]] && args+=(-l "$1")
+
+	./.venv/bin/ansible-inventory \
+		--list "${args[@]}" \
+		| jq -r "keys | .[]" \
+		| grep -Ev '^_meta$' \
+		| sort -u
 }
 
 Hosts() {
@@ -57,6 +73,9 @@ cmd="${1-}"
 [[ $# -gt 0 ]] && shift
 
 case "${cmd}" in
+"groups")
+	Groups "$@"
+	;;
 "hosts")
 	Hosts "$@"
 	;;
