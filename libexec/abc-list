@@ -36,7 +36,7 @@ Hosts() {
 
 Plays() {
 	[[ $# -eq 0 ]] || Usage_Exit
-	./bin/ap --list
+	./bin/ap --list | sed -e 's/^- //' | sort
 }
 
 Tags() {
