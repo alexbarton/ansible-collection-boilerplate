@@ -102,6 +102,23 @@ git status --no-column
 git commit -m "Initial commit"
 ```
 
+### Alternate approach using system-wide installed `ansible-galaxy` command
+
+When Ansible, including `ansible-galaxy`, and a appropriate Python version is
+already installed on the local system, for example using the package manager of
+the operating system distribution, the Ansible Boilerplate Collection can be
+installed like this:
+
+```bash
+ansible-galaxy collection install -p ansible_galaxy ${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}
+./ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/abc init
+```
+
+*Note:* This approach does not initialize a Python project, does not use a
+Python "virtual environment" and depends on all Ansible and Python dependencies
+already being installed system-wide! It is *not* the recommended way and should
+only be used when using a proper Python "virtual environment" is not an option!
+
 ## Initialising ("Installing") an Existing Project
 
 When checking out an existing project, all of its Python (if any) and Ansible
