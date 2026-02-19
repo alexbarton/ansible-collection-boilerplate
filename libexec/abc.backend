@@ -199,7 +199,7 @@ Update() {
 	Update_ABC
 
 	# Update Python Venv
-	if [[ -n ${ABC_USE_VENV} ]]; then
+	if [[ -n ${ABC_USE_VENV:-} ]]; then
 		"Venv_Update_${ABC_VENV_MANAGER}" || return 1
 	fi
 }

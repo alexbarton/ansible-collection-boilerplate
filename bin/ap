@@ -13,7 +13,7 @@ cd "$(dirname "$0")/.." || exit 1
 test -x "${PWD}/.venv/bin/ansible-playbook" || make "${PWD}/.venv/bin/ansible"
 
 # Get playbook name:
-play="$1"
+play="${1:-}"
 shift
 
 if [[ "${play}" == "--list" ]]; then

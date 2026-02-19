@@ -102,7 +102,7 @@ Stub_Init_Install() {
 		return 1
 	fi
 
-	if [[ -n ${ABC_USE_VENV} ]]; then
+	if [[ -n ${ABC_USE_VENV:-} ]]; then
 		"Venv_Init_${ABC_VENV_MANAGER}" || return 1
 
 		echo "Python virtual environment ready."
@@ -176,7 +176,7 @@ function Stub_Init() {
 		EOF
 	fi
 
-	[[ -n ${ABC_USE_VENV} ]] || return
+	[[ -n ${ABC_USE_VENV:-} ]] || return
 
 	if [[ "$ABC_VENV_MANAGER" == "UV" ]]; then
 		printf 'Initializing a new Python project ...\n'
@@ -260,7 +260,7 @@ if ! "${ANSIBLE_GALAXY}" --version &>/dev/null; then
 	export ABC_USE_VENV=1
 fi
 
-if [[ -n ${ABC_USE_VENV} ]]; then
+if [[ -n ${ABC_USE_VENV:-} ]]; then
 	# We are using a Python Venv. But which Venv manager is available?
 	if "${UV}" --help &>/dev/null; then
 		# "uv" was detected.
