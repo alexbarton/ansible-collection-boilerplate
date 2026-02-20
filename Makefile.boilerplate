@@ -6,7 +6,20 @@ SOURCE_ROOT ?= $(CURDIR)
 VENV_D = $(SOURCE_ROOT)/.venv
 VENV_BIN = $(VENV_D)/bin
 
+all:
+
+ifdef VIRTUAL_ENV
+# Looks like a virtual environment is already activated. Use it!
 all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
+endif
+ifneq ("$(wildcard $(VENV_D))","")
+# A ".venv" directory exists already. Use it!
+all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
+endif
+ifeq ("$(shell command -v ansible-galaxy)","")
+# No "ansible-galaxy" command was found, use a virtual environment!
+all: $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint
+endif
 
 check: check-ansible
 
@@ -23,7 +36,9 @@ ifneq ($(patsubst %..,,$(lastword $(SOURCE_ROOT))),)
 update: $(SOURCE_ROOT)/bin/abc
 #	Update the project.
 	$(SOURCE_ROOT)/bin/abc update
+ifneq ("$(wildcard $(VENV_BIN))","")
 	touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
+endif
 
 # Clean up, for example after upgrading the project.
 cleanup:
@@ -33,24 +48,52 @@ cleanup:
 
 endif
 
+ifneq ("$(wildcard $(VENV_BIN))","")
 check-ansible: $(VENV_BIN)/ansible-lint
+endif
+check-ansible:
 #	Check Ansible executable ...
+ifneq ("$(wildcard $(VENV_BIN))","")
 	"$(VENV_BIN)"/ansible --version
+else
+	ansible --version
+endif
 	@echo
 #	Run ansible-playbook syntax check, when a "site play" is found ...
 ifneq ("$(wildcard playbooks/site.yml)","")
+ifneq ("$(wildcard $(VENV_BIN))","")
 	"$(VENV_BIN)"/ansible-playbook --syntax-check playbooks/site.yml
+else
+	ansible-playbook --syntax-check playbooks/site.yml
+endif
 	@echo
 endif
 ifneq ("$(wildcard site.yml)","")
+ifneq ("$(wildcard $(VENV_BIN))","")
 	"$(VENV_BIN)"/ansible-playbook --syntax-check site.yml
+else
+	ansible-playbook --syntax-check site.yml
+endif
 	@echo
 endif
 #	Check ansible-lint executable ...
+ifneq ("$(wildcard $(VENV_BIN))","")
 	"$(VENV_BIN)"/ansible-lint --version
-	@echo
+else
+ifneq ("$(shell command -v ansible-lint)","")
+	ansible-lint --version
+else
+	@printf '\e[33;1mWarning: "ansible-lint" not found! Skipped tests!\e[0m\n'
+endif
+endif
 #	Run ansible-lint ...
+ifneq ("$(wildcard $(VENV_BIN))","")
 	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
+else
+ifneq ("$(shell command -v ansible-lint)","")
+	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
+endif
+endif
 	@echo
 
 clean-ansible:
@@ -80,7 +123,9 @@ $(VENV_BIN)/ansible $(VENV_BIN)/ansible-galaxy $(VENV_BIN)/ansible-lint venv: $(
 endif
 #	Install the project.
 	"$(SOURCE_ROOT)/bin/abc" install
+ifneq ("$(wildcard $(VENV_BIN))","")
 	touch -c "$(VENV_BIN)/ansible" "$(VENV_BIN)/ansible-galaxy" "$(VENV_BIN)/ansible-lint"
+endif
 
 ifneq ("$(wildcard requirements.yml)","")
 # Add dependency on requirements.yml, when it exists:

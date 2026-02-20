@@ -88,9 +88,17 @@ Usage_Hint_Install() {
 Stub_Init_Install() {
 	# Make sure "ansible-galaxy" was found and tested successfully; the
 	# test is in the main script. And show an info text if not (so far).
-	if [[ -z ${ANSIBLE_GALAXY-} ]]; then
+	if [[ -n ${VIRTUAL_ENV:-} ]]; then
+		echo 'Using already activated Python "virtual environment" ...'
+		export ABC_USE_VENV=1
+	elif [[ -d .venv ]]; then
+		echo 'Found a ".venv" directory, will use a Python "virtual environment" ...'
+		export ABC_USE_VENV=1
+	elif [[ -z ${ANSIBLE_GALAXY-} ]]; then
 		echo 'No "ansible-galaxy" command found, will use a Python "virtual environment" ...'
 		export ABC_USE_VENV=1
+	else
+		echo 'Using the existing Ansible installation ...'
 	fi
 
 	# Are we initializing a new project?
@@ -176,7 +184,7 @@ function Stub_Init() {
 		EOF
 	fi
 
-	[[ -n ${ABC_USE_VENV:-} ]] || return
+	[[ -n ${ABC_USE_VENV:-} ]] || return 0
 
 	if [[ "$ABC_VENV_MANAGER" == "UV" ]]; then
 		printf 'Initializing a new Python project ...\n'
