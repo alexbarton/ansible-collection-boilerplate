@@ -9,8 +9,11 @@ set -eu -o pipefail
 # Change working directory to the base directory ...
 cd "$(dirname "$0")/.." || exit 1
 
-# Prepare environment ...
-test -x "${PWD}/.venv/bin/ansible-playbook" || make "${PWD}/.venv/bin/ansible"
+# Enable the Python "virtual environment" when one exists:
+if [[ -r .venv/bin/activate ]]; then
+	# shellcheck disable=SC1091
+	. .venv/bin/activate
+fi
 
 # Get playbook name:
 play="${1:-}"
@@ -62,4 +65,4 @@ options=("$@")
 # Run ansible-playbook(1):
 set +u
 [[ -t 1 ]] && set -x
-"${PWD}/.venv/bin/ansible-playbook" "${playbook}" "${options[@]}"
+exec ansible-playbook "${playbook}" "${options[@]}"

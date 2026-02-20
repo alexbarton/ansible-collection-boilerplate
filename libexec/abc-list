@@ -29,7 +29,7 @@ Groups() {
 	[[ -r .ansible-vault-secret ]] && args+=("--vault-password-file=.ansible-vault-secret")
 	[[ $# -ge 1 ]] && args+=(-l "$1")
 
-	./.venv/bin/ansible-inventory \
+	ansible-inventory \
 		--list "${args[@]}" \
 		| jq -r "keys | .[]" \
 		| grep -Ev '^_meta$' \
@@ -43,7 +43,7 @@ Hosts() {
 	[[ -r .ansible-vault-secret ]] && args+=("--vault-password-file=.ansible-vault-secret")
 	[[ $# -ge 1 ]] && args+=(-l "$1")
 
-	./.venv/bin/ansible-inventory \
+	ansible-inventory \
 		--list "${args[@]}" |
 		jq ".[].hosts" |
 		sed -Ene 's/^.*"(.*)",?/\1/p' |

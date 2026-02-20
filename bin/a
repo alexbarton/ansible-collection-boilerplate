@@ -9,8 +9,11 @@ set -eu -o pipefail
 # Change working directory to the base directory ...
 cd "$(dirname "$0")/.." || exit 1
 
-# Prepare environment ...
-test -x "${PWD}/.venv/bin/ansible" || make "${PWD}/.venv/bin/ansible"
+# Enable the Python "virtual environment" when one exists:
+if [[ -r .venv/bin/activate ]]; then
+	# shellcheck disable=SC1091
+	. .venv/bin/activate
+fi
 
 # Options ...
 options=("$@")
@@ -19,4 +22,4 @@ options=("$@")
 
 # Run ansible(1):
 set -x
-"${PWD}/.venv/bin/ansible" "${options[@]}"
+exec ansible "${options[@]}"

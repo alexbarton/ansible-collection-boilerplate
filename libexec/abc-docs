@@ -27,12 +27,6 @@ case "${1-}" in
 	;;
 esac
 
-# Change working directory to the base directory ...
-cd "$(dirname "$0")/.." || exit 1
-
-# Prepare environment ...
-test -x "${PWD}/.venv/bin/ansible-doc" || make "${PWD}/.venv/bin/ansible"
-
 # Run ansible(1):
 set -x
-"${PWD}/.venv/bin/ansible-doc" "$@"
+exec ansible-doc "$@"

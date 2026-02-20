@@ -7,6 +7,12 @@
 
 set -eu -o pipefail
 
+# Enable the Python "virtual environment" when one exists:
+if [[ -r .venv/bin/activate ]]; then
+	# shellcheck disable=SC1091
+	. .venv/bin/activate
+fi
+
 # Detect commands to use:
 export ANSIBLE_GALAXY="${ANSIBLE_GALAXY:-$(command -v ansible-galaxy 2>/dev/null || echo "ansible-galaxy")}"
 export PYTHON="${PYTHON:-$(command -v python3 2>/dev/null || echo "python3")}"
