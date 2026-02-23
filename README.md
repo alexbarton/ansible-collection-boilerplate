@@ -17,6 +17,9 @@ More information can be found online here:
 - [GitHub](https://github.com/alexbarton/ansible-collection-boilerplate)
 - [Ansible Galaxy](https://galaxy.ansible.com/ui/repo/published/alexbarton/boilerplate/)
 
+*Note:* This is *version 2* of the Ansible Boilerplate Collection. Please see
+below for upgrade information!
+
 ## Features and Goals
 
 - Provide a solid and extensible base for your own Ansible project, in which
@@ -172,4 +175,70 @@ Rhe make target is called "update":
 
 ```bash
 make update
+```
+
+## Upgrading from Ansible Boilerplate Collection version 1
+
+The most prominent change is the renaming of the helper tool from the old
+`bin/ansible-boilerplate` to the new `bin/abc` name.
+
+Most probably your local setup was not pinned to version 1 and automatically
+updated to version 2, and now you see an error message like this:
+
+```shell
+Copying "boilerplate" script into bin/ directory ...
+cp: ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/ansible-boilerplate:
+  No such file or directory
+```
+
+... or this:
+
+```bash
+/bin/sh: /my/project_basedir/bin/abc: No such file or directory
+```
+
+*Don't worry!*
+
+Either use your version control system to revert to the last known good commit
+and pin the dependency on the Ansible Boilerplate Collection in the
+`requirements.yml` file to version 1 (note the ",v1" at the end of the URL):
+
+```yml
+collections:
+  - git@github.com:alexbarton/ansible-collection-boilerplate.git,v1
+```
+
+Or (even better?) *upgrade* your project to the current version 2 of the
+Ansibke Boilerplate Collection by runing the new `abc` command directly from
+its source in the `ansible_galaxy/` folder once to (re-) install the project:
+
+```bash
+./ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/abc install
+```
+
+Next, check all the new versions of template files and compare them with the
+existing variants in your project, and incorporate relevant changes into the
+configuration files used in your project:
+
+```bash
+find . -name '*.new'
+```
+
+You can show the differences of all of them with this command, for example:
+
+```bash
+for new_file in $(find . -name '*.new'); do \
+    diff -u ${new_file%%.new} ${new_file} | LESS= less; \
+done
+```
+
+### Makefile's
+
+If you use the Makefile system, make sure to update how the `Makefile` of the
+Ansible Boilerplate Collection is included.
+
+You can check the required configuration with the following command:
+
+```bash
+bin/abc generate makefile
 ```
