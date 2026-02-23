@@ -149,6 +149,11 @@ Backend_Install() {
 			fi
 		fi
 	done
+
+	if [[ -e bin/ansible-boilerplate ]]; then
+		echo "Cleaning up ..."
+		rm -fv bin/ansible-boilerplate
+	fi
 }
 
 #
