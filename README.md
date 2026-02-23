@@ -119,6 +119,21 @@ Python "virtual environment" and depends on all Ansible and Python dependencies
 already being installed system-wide! It is *not* the recommended way and should
 only be used when using a proper Python "virtual environment" is not an option!
 
+### Which installation method and tools are used when
+
+1. When an activated Python "virtual environment" is found, it is used.
+2. When a `.venv` folder is found, a "virtual environment" will be initialized
+   (when not already initialized) and used.
+3. When the `ansible-galaxy` command is found in the `$PATH`, *no* virtual
+   environment will be used but an existing Ansible installation is assumed on
+   the system and will be used.
+4. If none of the above rules matched, a "virtual environment" will be
+   initialized (when not initialized already) and used.
+
+When a Python "virtual environment" is used, the [Astral `uv`
+tool](https://docs.astral.sh/uv/) will be used when available. The Python
+"venv" module with traditional `pip` is used if it was not found.
+
 ## Initialising ("Installing") an Existing Project
 
 When checking out an existing project, all of its Python (if any) and Ansible
