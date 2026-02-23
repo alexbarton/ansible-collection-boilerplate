@@ -208,7 +208,7 @@ Venv_Init_Python() {
 	fi
 	(
 		set -x
-		test -d .venv || "${PYTHON}" -m venv .venv
+		test -e .venv/pyvenv.cfg || "${PYTHON}" -m venv .venv
 		./.venv/bin/pip install -U pip
 		./.venv/bin/pip install -r requirements.txt
 	)
@@ -231,7 +231,7 @@ Venv_Init_UV() {
 		echo 'Found a "requirements.txt" file, installing requirements ...'
 		(
 			set -x
-			test -d .venv || "${UV}" venv
+			test -e .venv/pyvenv.cfg || "${UV}" venv
 			"${UV}" pip install -r requirements.txt
 		)
 		return $?
@@ -243,15 +243,12 @@ Venv_Init_UV() {
 # Script initialization:
 
 # Check if there already is a Python Venv and update paths accordingly:
-unset venv_found venv_broken
 if [[ -d .venv ]]; then
-	if [[ ! -r .venv/pyvenv.cfg || ! -x .venv/bin/python ]]; then
-		echo 'Found a broken Python "virtual environment"!? Aborting!'
-		exit 1
-	fi
-	export PYTHON="${PWD}/.venv/bin/python"
-	export ANSIBLE_GALAXY="${PWD}/.venv/bin/ansible-galaxy"
 	export ABC_USE_VENV=1
+	if [[ -e .venv/pyvenv.cfg ]]; then
+		export PYTHON="${PWD}/.venv/bin/python"
+		export ANSIBLE_GALAXY="${PWD}/.venv/bin/ansible-galaxy"
+	fi
 fi
 
 # Check if ansible-galaxy command is available:
