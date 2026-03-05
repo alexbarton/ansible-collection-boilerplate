@@ -9,7 +9,7 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
-## Release 2.0.0
+## Release 2.0.0 (2026-03-05)
 
 Breaking changes:
 
@@ -19,13 +19,28 @@ Breaking changes:
 - Plugins now use the `abc-` prefix (instead of `ab-`). Local plugins must be
   renamed accordingly! All included plugins have been changed accordingly.
 - Makefile: The update target is now called "update" (no longer "upgrade").
+- No longer set the deprecated `ansible_managed` variable in `ansible.cfg`:
+  If you want to continue using it, simply set this variable in your group
+  variables for all hosts to whatever you want.
 
 New features:
 
-- Support the `uv` tool in addition to the Python "venv" module and `pip`.
+- Support the `uv` tool and proper Python projects using `pyproject.toml`, in
+  addition to the Python "venv" module and `pip`, and convert the Ansible
+  Boilerplate Collection itself to a Python project.
+- Extend/enhance the EditorConfig template.
+- New `abc` subcommand:
+  - `generate makefile`
+  - `list groups`
+  - `reset`
+
+Fixes:
+
+- Properly support an existing "global" Ansible installation.
 
 Other changes:
 
+- Do not depend on the full Ansible package, depend on `ansible-core` "only".
 - More color in script output =:)
 - Lots of smaller bug fixes and enhancements.
 
@@ -33,7 +48,7 @@ Other changes:
 
 Breaking changes:
 
-- Rename the "get-facst" playbook into "get_facts". We want to follow our own
+- Rename the "get-facts" playbook into "get_facts". We want to follow our own
   naming standards, see `docs/ansible-best-practices.md`!
 
 New features:
@@ -45,7 +60,7 @@ New features:
 Other changes:
 
 - Makefile.boilerplate: Better structure "make check-ansible" output.
-- Fix "trunk" warnings in Makedown files.
+- Fix "trunk" warnings in Markdown files.
 - cmd/new: Fix generated copyright line in README.md.
 - Fix some shellcheck/trunk warnings.
 - Makefile: Fix warnings for not found tools in "check" target.
