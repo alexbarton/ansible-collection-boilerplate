@@ -185,10 +185,20 @@ The most prominent change is the renaming of the helper tool from the old
 Most probably your local setup was not pinned to version 1 and automatically
 updated to version 2, and now you see an error message like this:
 
-```shell
+```bash
 Copying "boilerplate" script into bin/ directory ...
 cp: ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/ansible-boilerplate:
   No such file or directory
+```
+
+... or this:
+
+```bash
+ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate:
+  No such file or directory
+make: *** No rule to make target
+  `ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate'.
+  Stop.
 ```
 
 ... or this:
