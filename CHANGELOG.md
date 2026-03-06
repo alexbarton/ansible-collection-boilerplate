@@ -29,10 +29,10 @@ New features:
   addition to the Python "venv" module and `pip`, and convert the Ansible
   Boilerplate Collection itself to a Python project.
 - Extend/enhance the EditorConfig template.
-- New `abc` subcommand:
-  - `generate makefile`
-  - `list groups`
-  - `reset`
+- New `abc` subcommands:
+  1. `generate makefile`
+  2. `list groups`
+  3. `reset`
 
 Fixes:
 
@@ -124,15 +124,15 @@ Other changes:
 - Check for a valid project directory for most subcommands.
 - Show help for plugin commands.
 - Look for plugins in more places:
-    1. Plugins in the local project:
-       `./libexec`
-    2. Local system-wide plugins:
-       `/usr/local/libexec/ansible-boilerplate/` and
-       `/usr/local/lib/ansible-boilerplate/`
-    3. Plugins from the local "boilerplate" Ansible Galaxy collection:
-       `./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec`
-    4. System-wide plugins:
-       `/usr/libexec/ansible-boilerplate/`
+  1. Plugins in the local project:
+     `./libexec`
+  2. Local system-wide plugins:
+     `/usr/local/libexec/ansible-boilerplate/` and
+     `/usr/local/lib/ansible-boilerplate/`
+  3. Plugins from the local "boilerplate" Ansible Galaxy collection:
+     `./ansible_galaxy/ansible_collections/alexbarton/boilerplate/libexec`
+  4. System-wide plugins:
+     `/usr/libexec/ansible-boilerplate/`
 
 ## Release 1.2.0 (2024-08-22)
 
