@@ -137,7 +137,7 @@ When a Python "virtual environment" is used, the [Astral `uv`
 tool](https://docs.astral.sh/uv/) will be used when available. The Python
 "venv" module with traditional `pip` is used if it was not found.
 
-## Initialising ("Installing") an Existing Project
+## Initializing ("Installing") an Existing Project
 
 When checking out an existing project, all of its Python (if any) and Ansible
 dependencies need to be installed, too, including this Ansible Boilerplate
@@ -148,7 +148,7 @@ should be included in the project) like this:
 ./bin/abc install
 ```
 
-### Initialising ("Installing") an Existing Project Using `make`
+### Initializing ("Installing") an Existing Project Using `make`
 
 When having a Python virtual environment and using the Makefile system provided
 by this project, you can just use the `make` command itself -- in this case,
@@ -171,7 +171,7 @@ after freshly checking out your project) and while working on it like this:
 
 ### Updating a Project Using `make`
 
-Rhe make target is called "update":
+The make target is called "update":
 
 ```bash
 make update
@@ -219,7 +219,7 @@ collections:
 ```
 
 Or (even better?) *upgrade* your project to the current version 2 of the
-Ansibke Boilerplate Collection by runing the new `abc` command directly from
+Ansible Boilerplate Collection by running the new `abc` command directly from
 its source in the `ansible_galaxy/` folder once to (re-) install the project:
 
 ```bash

@@ -14,7 +14,7 @@ details, fixes and internal changes.
 Breaking changes:
 
 - The main script (`bin/ansible-boilerplate`) was renamed to `bin/abc`, and
-  split in a "frontend" (which is to be included into dependant projects, like
+  split in a "frontend" (which is to be included into dependent projects, like
   before) and a "backend" (which is contained in the Ansible Collection only).
 - Plugins now use the `abc-` prefix (instead of `ab-`). Local plugins must be
   renamed accordingly! All included plugins have been changed accordingly.
