@@ -186,7 +186,7 @@ function Stub_Init() {
 
 	[[ -n ${ABC_USE_VENV:-} ]] || return 0
 
-	if [[ "$ABC_VENV_MANAGER" == "UV" ]]; then
+	if [[ "${ABC_VENV_MANAGER}" == "UV" ]]; then
 		printf 'Initializing a new Python project ...\n'
 		(
 			set -x
