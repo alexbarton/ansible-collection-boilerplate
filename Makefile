@@ -40,6 +40,7 @@ dist: all $(VENV_BIN)/ansible-galaxy
 
 distcheck: dist
 #	Run tests on distribution archive ...
+	test $$(stat -c %s $$(find "$(DIST_D)" -name '*.tar.gz' | sort -Vr | head -n1)) -lt 100000
 	mkdir -p "$(DIST_D)/check"
 	tar -C "$(DIST_D)/check" -xzf $$(find "$(DIST_D)" -name '*.tar.gz' | sort -Vr | head -n1)
 	test -e "$(VENV_D)" && ln -fs "$(VENV_D)" "$(DIST_D)/check/.venv"
