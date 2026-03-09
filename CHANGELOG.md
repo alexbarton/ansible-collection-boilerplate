@@ -9,6 +9,16 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.0.1 (2026-03-10)
+
+Fixes:
+
+- Lower Python version requirements: Python 3.12 is fine!
+- Enhance/format documentation a bit, fix some spelling mistakes.
+- `galaxy.yml`: Ignore `.ansible` and `.jj` directories.
+- `bin/abc` (stub): Fix shellcheck warning, bring variable quoting in line.
+- `how-to-release.md`: Update version information in pyproject.toml, too!
+
 ## Release 2.0.0 (2026-03-05)
 
 Breaking changes:
