@@ -9,6 +9,5 @@
         "**/playbooks/**/*.yml": "ansible",
         "**/roles/**/*.yml": "ansible",
         "Makefile*": "makefile"
-    },
-    "python.defaultInterpreterPath": ".venv/bin/python"
+    }
 }
