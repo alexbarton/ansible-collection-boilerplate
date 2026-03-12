@@ -2,6 +2,8 @@
 # ansible-lint configuration.
 # See <https://ansible-lint.readthedocs.io/configuring/>.
 
+profile: production
+
 exclude_paths:
   - .cache/
   - .git/
