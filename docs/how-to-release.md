@@ -38,7 +38,7 @@
 4. Create the release commit and signed tag:
 
    ```sh
-   git add CHANGELOG.md galaxy.yml pyproject.toml
+   git add CHANGELOG.md galaxy.yml pyproject.toml uv.lock
    git diff --cached --patch-with-stat
    git commit --message "Release ${major}.${minor}.${fix}"
    git tag -m "Release ${major}.${minor}.${fix}" -s \
