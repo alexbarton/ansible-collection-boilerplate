@@ -9,6 +9,18 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.0.2 (2026-03-12)
+
+Changes:
+
+- Enhance/update the VS Code settings in ".vscode/settings.json".
+- Require the ansible-lint "production" profile in ".ansible-lint".
+- make distcheck: Ensure distribution archives are less than 100 KB in size.
+- `how-to-release.md`: Add the updated "uv.lock" file, too!
+
+*Note*: The template changes only affects the ABC project itself automatically,
+and must be integrated into dependant projects manually, if desired.
+
 ## Release 2.0.1 (2026-03-10)
 
 Fixes:
