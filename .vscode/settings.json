@@ -3,6 +3,7 @@
     "ansible.python.interpreterPath": ".venv/bin/python",
     "ansible.validation.lint.path": ".venv/bin/ansible-lint",
     "files.associations": {
+        ".ansible-lint": "yaml",
         "**/ansible/**/*.yml": "ansible",
         "**/group_vars/*": "ansible",
         "**/host_vars/*": "ansible",
