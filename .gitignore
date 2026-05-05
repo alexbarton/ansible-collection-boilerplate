@@ -15,4 +15,4 @@
 /bin/aps
 /dist/
 
-.ansible-vault-secret
+.ansible-vault*

@@ -57,12 +57,7 @@ done
 # appending the ".yml" extension, so use the given playbook name verbatim.
 [[ -n "${playbook:-}" ]] || playbook="${play}"
 
-# Options ...
-options=("$@")
-
-[[ -r .ansible-vault-secret ]] && options+=("--vault-password-file=.ansible-vault-secret")
-
 # Run ansible-playbook(1):
 set +u
 [[ -t 1 ]] && set -x
-exec ansible-playbook "${playbook}" "${options[@]}"
+exec ansible-playbook "${playbook}" "$@"

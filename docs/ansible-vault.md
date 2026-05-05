@@ -2,13 +2,14 @@
 
 This Boilerplate Collection is meant to cope well with Ansible vault.
 
-The following files are treated specially for ansible-vault(1) usage:
+Just use the regular `ansible.cfg` file to configure all required Ansible Vault
+related settings, for example like this:
 
-- `.ansible-vault-secret`: You can use this as a "local vault password file".
-  It should _not_ be added to the Git repository and is listed in the
-  `.gitignore` template file by default.
+```ini
+[default]
+vault_password_file = .ansible-vault-secret
+```
 
-- `group_vars/all/ansible_vault.yml`: Use this file to store encrypted Ansible
-  variables which are handled by ansible-vault(1). It is automatically added to
-  some commands invoked by the Ansible Boilerplate scripts, wrappers, and
-  Makefile's.
+Note that password files should _not_ be added to the source code repository!
+Therefore the auto-generated `.gitignore` file includes this pattern:
+`.ansible-vault*`.

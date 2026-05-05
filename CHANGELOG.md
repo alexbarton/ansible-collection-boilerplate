@@ -9,6 +9,16 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.1.0
+
+Breaking changes:
+
+- The `.ansible-vault-password` file is no longer treated special, and no
+  `--vault-password-file=` parameters are auto-added by the Ansible Boilerplate
+  Collection scripts: Please configure the Ansible Vault settings in the
+  `ansible.cfg` file, see `docs/ansible-vault.md` for details. This enables
+  other tools to make use of this configuration as well.
+
 ## Release 2.0.2 (2026-03-12)
 
 Changes:

@@ -26,7 +26,6 @@ Groups() {
 	[[ $# -le 1 ]] || Usage_Exit
 
 	args=()
-	[[ -r .ansible-vault-secret ]] && args+=("--vault-password-file=.ansible-vault-secret")
 	[[ $# -ge 1 ]] && args+=(-l "$1")
 
 	ansible-inventory \
@@ -40,7 +39,6 @@ Hosts() {
 	[[ $# -le 1 ]] || Usage_Exit
 
 	args=()
-	[[ -r .ansible-vault-secret ]] && args+=("--vault-password-file=.ansible-vault-secret")
 	[[ $# -ge 1 ]] && args+=(-l "$1")
 
 	ansible-inventory \

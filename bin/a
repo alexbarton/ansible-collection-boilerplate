@@ -15,11 +15,6 @@ if [[ -r .venv/bin/activate ]]; then
 	. .venv/bin/activate
 fi
 
-# Options ...
-options=("$@")
-
-[[ -r .ansible-vault-secret ]] && options+=("--vault-password-file=.ansible-vault-secret")
-
 # Run ansible(1):
 set -x
-exec ansible "${options[@]}"
+exec ansible "$@"
