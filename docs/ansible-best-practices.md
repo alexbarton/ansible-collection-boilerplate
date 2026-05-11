@@ -67,7 +67,7 @@ Before introducing new tags, check which ones are already available and try to
 reuse those whenever possible!
 
 ```shell
-./bin/ansible-boilerplate list tags
+./bin/abc list tags
 ```
 
 Or, without any Ansible tools:

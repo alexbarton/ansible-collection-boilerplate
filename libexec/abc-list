@@ -1,15 +1,17 @@
 #!/bin/bash
 #
+# Ansible Boilerplate Collection:
 # description=List hosts, tags, etc. used in the project.
 #
 
 set -euo pipefail
 
+#
 # Show usage information on stderr.
 #
 Usage_Exit() {
 	{
-		echo "ansible-boilerplate list <subcommand>"
+		printf '\e[1mUsage:\e[m abc list <subcommand>\n'
 		echo
 		echo   "  groups [<limit_pattern>]"
 		echo   "		Show all or a subset of host groups defined in the inventory"

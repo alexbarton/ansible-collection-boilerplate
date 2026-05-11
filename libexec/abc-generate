@@ -1,16 +1,19 @@
 #!/bin/bash
 #
-# description=Generate files from existing data or templates
+# Ansible Boilerplate Collection:
+# description=Generate files from existing data or templates.
 #
 
 set -euo pipefail
 
 unset FORCE
 
+#
 # Show usage information on stderr.
+#
 Usage_Exit() {
 	{
-		echo "ansible-boilerplate generate [--force|-f] <subcommand>"
+		printf '\e[1mUsage:\e[m abc generate [--force|-f] <subcommand>\n'
 		echo
 		echo   "  makefile	Create a toplevel Makefile for this project"
 		echo   "  readme <role>	Create a README.md file for a role"

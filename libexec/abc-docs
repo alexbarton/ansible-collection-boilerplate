@@ -1,15 +1,17 @@
 #!/bin/bash
 #
+# Ansible Boilerplate Collection:
 # description=Show documentation.
 #
 
 set -euo pipefail
 
+#
 # Show usage information on stderr.
 #
 Usage_Exit() {
 	{
-		echo "ansible-boilerplate docs <topic>"
+		printf '\e[1mUsage:\e[m abc docs <topic>\n'
 		echo
 	} >&2
 	exit "${1:-1}"

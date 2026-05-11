@@ -1,15 +1,17 @@
 #!/bin/bash
 #
+# Ansible Boilerplate Collection:
 # description=Create a new Ansible object.
 #
 
 set -euo pipefail
 
+#
 # Show usage information on stderr.
 #
 Usage_Exit() {
 	{
-		echo "ansible-boilerplate new <subcommand>"
+		printf '\e[1mUsage:\e[m abc new <subcommand>\n'
 		echo
 		echo   "  role <name>	Create a new role"
 		echo

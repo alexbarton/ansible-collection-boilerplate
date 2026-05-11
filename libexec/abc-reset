@@ -1,18 +1,17 @@
 #!/bin/bash
 #
 # Ansible Boilerplate Collection:
-# Reset the project.
-#
 # description=Reset project, remove 3rd-party dependencies.
 #
 
 set -euo pipefail
 
+#
 # Show usage information on stderr.
 #
 Usage_Exit() {
 	{
-		echo "ansible-boilerplate reset"
+		printf '\e[1mUsage:\e[m abc reset\n'
 		echo
 	} >&2
 	exit "${1:-1}"
