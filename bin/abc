@@ -13,6 +13,9 @@
 
 set -eu -o pipefail
 
+# Change working directory to the base directory ...
+cd "$(dirname "$0")/.." || exit 1
+
 # Initialize global environment:
 
 # Set some sane defaults for tools.
