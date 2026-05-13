@@ -1,0 +1,268 @@
+#!/bin/bash
+#
+# Ansible Boilerplate Collection:
+# Try to integrate changes that were pulled in by an update ("abc up") from
+# the upstream Ansible Boilerplate Collection, now saved in "*.new" files.
+#
+# description=Integrate changes pulled in by an update.
+#
+
+set -euo pipefail
+
+# Template files of the collection which "abc update" installs as "*.new".
+# NOTE: Keep in sync with Update_ABC() in "libexec/abc.backend"!
+TEMPLATE_FILES=(
+	.ansible-lint
+	.editorconfig
+	.gitignore
+	.vscode/settings.json
+	.yamllint.yml
+	ansible.cfg
+)
+
+#
+# Show usage information on stderr.
+#
+Usage_Exit() {
+	{
+		printf '\e[1mUsage:\e[m abc integrate [--list | --diff | --tool <tool>] [<file> [...]]\n'
+		echo
+		echo "  --list	List all files with pending upstream changes"
+		echo "  --diff	Show the pending upstream changes"
+		echo "  --tool <tool>"
+		echo "		Use <tool> to merge the changes; the default is the value of"
+		echo "		ABC_MERGETOOL, \"git config merge.tool\" or \"vimdiff\""
+		echo
+		echo "Supported tools: code (vscode), gvimdiff, kdiff3, meld, nvimdiff,"
+		echo "opendiff, sdiff, vimdiff; other commands are called with the local"
+		echo "and the new file as arguments and must edit the local file in place."
+		echo
+		echo "Without <file>, all files with pending upstream changes are handled."
+		echo
+	} >&2
+	exit "${1:-1}"
+}
+
+#
+# List the template files with pending upstream changes on stdout.
+#
+Pending_Files() {
+	local file
+	for file in "${TEMPLATE_FILES[@]}"; do
+		if [[ -e "${file}.new" ]]; then
+			echo "${file}"
+		fi
+	done
+}
+
+#
+# Detect the merge tool to use and print its name on stdout.
+#
+Detect_Tool() {
+	local tool="${ABC_MERGETOOL:-}"
+	if [[ -z "${tool}" ]] && command -v git >/dev/null; then
+		tool="$(git config --get merge.tool 2>/dev/null || true)"
+	fi
+	echo "${tool:-vimdiff}"
+}
+
+#
+# Run the merge tool, which edits the local file in place.
+#
+# $1: Merge tool.
+# $2: Local file name.
+#
+Run_Tool() {
+	local tool="$1" file="$2" tmp result=0
+
+	case "${tool}" in
+	"vimdiff")
+		vimdiff "${file}" "${file}.new"
+		;;
+	"nvimdiff")
+		nvim -d "${file}" "${file}.new"
+		;;
+	"gvimdiff")
+		gvim -d -f "${file}" "${file}.new"
+		;;
+	"meld")
+		meld "${file}" "${file}.new"
+		;;
+	"kdiff3")
+		kdiff3 "${file}" "${file}.new" -o "${file}"
+		;;
+	"code" | "vscode")
+		# The right side of the diff editor is editable:
+		code --wait --diff "${file}.new" "${file}"
+		;;
+	"opendiff")
+		# Pipe the output to make opendiff wait for FileMerge to finish:
+		opendiff "${file}" "${file}.new" -merge "${file}" | cat
+		;;
+	"sdiff")
+		tmp="$(mktemp "${file}.XXXXXX")"
+		sdiff -o "${tmp}" "${file}" "${file}.new" || result=$?
+		# Exit codes 0 and 1 mean "no differences" and "differences":
+		if [[ ${result} -le 1 ]]; then
+			cat "${tmp}" >"${file}"
+			result=0
+		fi
+		rm -f "${tmp}"
+		return "${result}"
+		;;
+	*)
+		"${tool}" "${file}" "${file}.new"
+		;;
+	esac
+}
+
+#
+# Show the differences between the local file and its new upstream version,
+# colorized by "colordiff" when available and writing to a terminal.
+#
+# $1: Local file name.
+#
+Show_Diff() {
+	local diff="diff"
+	if [[ -t 1 ]] && command -v colordiff >/dev/null; then
+		diff="colordiff"
+	fi
+	"${diff}" -u "$1" "$1.new" || true
+}
+
+#
+# Remove the new upstream version of a file and the backups of it which
+# "install -b" creates ("<file>~" on GNU and "<file>.old" on BSD systems).
+#
+# $1: Local file name.
+#
+Remove_New() {
+	rm -f "$1.new" "$1.new~" "$1.new.old"
+}
+
+#
+# Integrate the new upstream version of a file interactively.
+#
+# $1: Merge tool.
+# $2: Local file name.
+#
+Integrate_File() {
+	local tool="$1" file="$2" answer
+
+	while true; do
+		if cmp -s "${file}" "${file}.new"; then
+			Remove_New "${file}"
+			printf '\e[1m%s\e[m: Up to date with the upstream version.\n' "${file}"
+			return 0
+		fi
+
+		printf '\e[1m%s\e[m: Differs from the upstream version.\n' "${file}"
+		if ! read -r -p "[m]erge, [d]iff, [k]eep local, [r]eplace with new, [s]kip, [q]uit? " answer; then
+			# End of input:
+			echo
+			exit 1
+		fi
+		case "${answer}" in
+		"m" | "merge")
+			Run_Tool "${tool}" "${file}" ||
+				printf '\e[1;33mWarning:\e[m "%s" failed!\n' "${tool}" >&2
+			;;
+		"d" | "diff")
+			Show_Diff "${file}"
+			;;
+		"k" | "keep")
+			Remove_New "${file}"
+			echo "Kept local version, removed upstream version."
+			return 0
+			;;
+		"r" | "replace")
+			cat "${file}.new" >"${file}"
+			Remove_New "${file}"
+			echo "Replaced local version with the upstream version."
+			return 0
+			;;
+		"s" | "skip")
+			return 0
+			;;
+		"q" | "quit")
+			exit 0
+			;;
+		esac
+	done
+}
+
+action="merge"
+tool=""
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+	"--list")
+		action="list"
+		;;
+	"--diff")
+		action="diff"
+		;;
+	"--tool")
+		[[ $# -ge 2 ]] || Usage_Exit 1
+		tool="$2"
+		shift
+		;;
+	"help" | "--help")
+		Usage_Exit 0
+		;;
+	"-"*)
+		Usage_Exit 1
+		;;
+	*)
+		break
+		;;
+	esac
+	shift
+done
+
+[[ -n "${tool}" && "${action}" != "merge" ]] && Usage_Exit 1
+
+files=()
+if [[ $# -gt 0 ]]; then
+	for file in "$@"; do
+		file="${file%.new}"
+		if [[ ! -e "${file}.new" ]]; then
+			echo "Oops, no pending upstream changes for \"${file}\" found!" >&2
+			exit 1
+		fi
+		files+=("${file}")
+	done
+else
+	while read -r file; do
+		files+=("${file}")
+	done < <(Pending_Files)
+fi
+
+if [[ ${#files[@]} -eq 0 ]]; then
+	[[ "${action}" == "list" ]] || echo "No pending upstream changes found."
+	exit 0
+fi
+
+case "${action}" in
+"list")
+	printf '%s\n' "${files[@]}"
+	;;
+"diff")
+	for file in "${files[@]}"; do
+		Show_Diff "${file}"
+	done
+	;;
+"merge")
+	if [[ ! -t 0 ]]; then
+		echo "Oops, merging requires an interactive terminal!" >&2
+		exit 1
+	fi
+	[[ -n "${tool}" ]] || tool="$(Detect_Tool)"
+	for file in "${files[@]}"; do
+		# Separate the output of the individual files:
+		[[ "${file}" == "${files[0]}" ]] || echo
+		Integrate_File "${tool}" "${file}"
+	done
+	;;
+esac
+exit 0

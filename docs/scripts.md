@@ -37,6 +37,11 @@ Usage: `./bin/abc [--debug] <subcommand> [<arguments> [...]]`
   project, which includes the Makefile of the collection.
 - `generate [--force|-f] readme <role>`: Create a `README.md` file for a role,
   including a list of the variables found in its `defaults/` directory.
+- `integrate [--list | --diff | --tool <tool>] [<file> [...]]`: Integrate
+  the upstream changes of template files which an update saved in `.new` files
+  (see below): list the affected files, show the differences, or merge them
+  interactively. The merge tool defaults to `ABC_MERGETOOL`, the `merge.tool`
+  Git setting or `vimdiff`. Pass `--help` to see all supported tools.
 - `list groups [<pattern>]`, `list hosts [<pattern>]`: List the groups or the
   hosts of the inventory, optionally limited by a host pattern. This requires
   the `jq` command.
@@ -56,13 +61,18 @@ When updating the template files of the collection (`.ansible-lint`,
 `.editorconfig`, `.gitignore`, `.vscode/settings.json`, `.yamllint.yml` and
 `ansible.cfg`), only files which already exist in the project are taken into
 account. When a file differs from the new version, the new version is installed
-next to it with a `.new` suffix, and you have to merge the changes yourself.
-`make cleanup` removes all these files afterwards.
+next to it with a `.new` suffix. Run `./bin/abc integrate` to merge the changes
+into the file of the project: once you have merged a file, or chosen to keep
+the local version or to replace it, the `.new` file is removed. Alternatively,
+merge the changes yourself and run `make cleanup` to remove all these files
+afterwards.
 
 ### Environment Variables
 
 - `ABC_BASE_D`: Directory of the installed Ansible Boilerplate Collection
   (default: `ansible_galaxy/ansible_collections/alexbarton/boilerplate`).
+- `ABC_MERGETOOL`: Merge tool for `integrate` (default: the `merge.tool` Git
+  setting, or `vimdiff`).
 - `ABC_PYTHON_MIN`: Minimum Python version for new Python "virtual
   environments" (default: `3.12`).
 - `ANSIBLE_GALAXY`, `PYTHON`, `UV`: The `ansible-galaxy`, `python3` and `uv`
