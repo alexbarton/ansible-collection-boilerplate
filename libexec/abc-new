@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Ansible Boilerplate Collection:
 # description=Create a new Ansible object.

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Ansible Collection Boilerplate:
 # "ap": ansible-playbook(1) wrapper script.

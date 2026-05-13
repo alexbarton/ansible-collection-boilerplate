@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Ansible Boilerplate Collection:
 # Backend script which implements most functionality. Not to be included in

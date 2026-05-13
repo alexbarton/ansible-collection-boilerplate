@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Ansible Boilerplate Collection:
 # description=Reset project, remove 3rd-party dependencies.

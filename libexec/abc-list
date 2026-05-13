@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Ansible Boilerplate Collection:
 # description=List hosts, tags, etc. used in the project.
