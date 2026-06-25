@@ -13,8 +13,12 @@
 
 set -eu -o pipefail
 
-# Change working directory to the base directory ...
-cd "$(dirname "$0")/.." || exit 1
+# Change working directory to the base directory, but only when this script is
+# not piped to bash(1) and its first argument is not "init", which both are
+# supported installation methods:
+if [[ "$0" != bash && "${1:-}" != init ]]; then
+	cd "$(dirname "$0")/.." || exit 1
+fi
 
 # Initialize global environment:
 
