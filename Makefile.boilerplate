@@ -91,7 +91,7 @@ ifneq ("$(wildcard $(VENV_BIN))","")
 	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
 else
 ifneq ("$(shell command -v ansible-lint)","")
-	"$(VENV_BIN)"/ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
+	ansible-lint --offline --project-dir "$(SOURCE_ROOT)" --show-relpath
 endif
 endif
 	@echo
