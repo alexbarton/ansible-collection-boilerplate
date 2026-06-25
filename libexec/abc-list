@@ -31,10 +31,10 @@ Groups() {
 	[[ $# -ge 1 ]] && args+=(-l "$1")
 
 	ansible-inventory \
-		--list "${args[@]}" \
-		| jq -r "keys | .[]" \
-		| grep -Ev '^_meta$' \
-		| sort -u
+		--list "${args[@]}" |
+		jq -r "keys | .[]" |
+		grep -Ev '^_meta$' |
+		sort -u
 }
 
 Hosts() {
