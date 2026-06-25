@@ -9,6 +9,14 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.1.1 (2026-06-25)
+
+Fixes:
+
+- Lower the required Ansible version in meta/runtime.yml for this Ansible
+  Collection, too, not only in pyproject.toml and uv.lock files for Python
+  which was changed in release 2.1.0 (see below).
+
 ## Release 2.1.0 (2026-06-25)
 
 Breaking changes:

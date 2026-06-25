@@ -1,7 +1,7 @@
 ---
 namespace: alexbarton
 name: boilerplate
-version: 2.1.0
+version: 2.1.1
 
 authors:
   - Alexander Barton <alex@barton.de>
