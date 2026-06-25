@@ -201,11 +201,11 @@ function Stub_Init() {
 	[[ -n ${ABC_USE_VENV:-} ]] || return 0
 
 	if [[ "${ABC_VENV_MANAGER}" == "UV" ]]; then
-		printf 'Initializing a new Python project ...\n'
+		printf 'Initializing a new Python project with the \e[1m"uv" tool\e[0m ...\n'
 		(
 			set -x
 			"${UV}" init -p "${PYTHON}" --bare
-			"${UV}" add 'ansible-core>=2.18.6' 'ansible-lint>=25'
+			"${UV}" add --no-sync 'ansible-core>=2.18.6' 'ansible-lint>=25'
 		)
 	else
 		printf 'Creating a new Python "\e[36mrequirements.txt\e[m" file ...\n'
