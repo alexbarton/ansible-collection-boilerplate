@@ -9,6 +9,26 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.2.0 (2026-06-26)
+
+Fixes:
+
+- `bin/abc`: Fix "pipe" and scripted installation: Don't fiddle with the
+  current working directory when the `bin/abc` stub script is piped to
+  `bash`(1) or called with "init" as its command, which both are supported
+  installation methods: in this case, we are most likely in an empty directory
+  with no project set up so far!
+
+Other changes:
+
+- `bin/abc`: Show an info when the working directory was changed.
+- `bin/abc`: Add a test for the project directory: Assume that the project root
+  folder must contain an "ansible.cfg" file and stop if it was not found.
+- `bin/abc`: Don't sync the project when initializing a new Python project:
+  This is done automatically later on in the Venv_Init_UV() function, don't do
+  it twice. And show an info that the "uv" tool is used for this.
+- Incorporate some code formatting changes suggested by "shuck format".
+
 ## Release 2.1.1 (2026-06-25)
 
 Fixes:
