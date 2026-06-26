@@ -13,8 +13,8 @@ details, fixes and internal changes.
 
 Fixes:
 
-- Lower the required Ansible version in meta/runtime.yml for this Ansible
-  Collection, too, not only in pyproject.toml and uv.lock files for Python
+- Lower the required Ansible version in `meta/runtime.yml` for this Ansible
+  Collection, too, not only in `pyproject.toml` and `uv.lock` files for Python
   which was changed in release 2.1.0 (see below).
 
 ## Release 2.1.0 (2026-06-25)
@@ -27,39 +27,39 @@ Breaking changes:
   `ansible.cfg` file, see `docs/ansible-vault.md` for details. This enables
   other tools to make use of this configuration as well.
 
-Changes:
-
-- Python dependencies: Lower ansible-core requirement, update ansible-lint:
-  There are projects out there in the wild still using the Ansible Boilerplate
-  Collection with ansible-core 2.16.18 -- which works. Therefore lower this
-  dependency. On the other hand, ansible-lint is still compatible with
-  ansible-core 2.16.18, therefore depend on it.
-- Documentation: Update and extend the "docs/scripts.md" file.
-- Use "/usr/bin/env bash" instead of hardcoded "/bin/bash" as interpreter:
-  Our scripts need a "quite modern" Bash 5.x shell, whereas /bin/bash on macOS
-  is quite dated version 3.2. Therefore use the /usr/bin/env wrapper in the
-  "shebang" to enable us to use other bash shells installed somewhere else but
-  findable via the PATH variable (for example using Homebrew).
-- bin/abc: Always change working directory to project directory:
-  Change the working directory right at he beginning, because all child
-  processes should expect that they are running with the project directory as
-  their working directory -- regardless of the directory from which the "abc"
-  tool itself was called.
-
 Fixes:
 
 - "abc" subcommands: Update usage information for "abc" script, no longer use
   the "ansible-boilerplate" name for commands.
 - Makefile.boilerplate: Correctly call ansible-lint when installed system-wide.
 
+Other changes:
+
+- Python dependencies: Lower ansible-core requirement, update ansible-lint:
+  There are projects out there in the wild still using the Ansible Boilerplate
+  Collection with ansible-core 2.16.18 -- which works. Therefore lower this
+  dependency. On the other hand, ansible-lint is still compatible with
+  ansible-core 2.16.18, therefore depend on it.
+- Documentation: Update and extend the `docs/scripts.md` file.
+- Use `/usr/bin/env bash` instead of hardcoded `/bin/bash` as interpreter:
+  Our scripts need a "quite modern" Bash 5.x shell, whereas `/bin/bash` on
+  macOS is quite dated version 3.2. Therefore use the `/usr/bin/env` wrapper in
+  the "shebang" to enable us to use other bash shells installed somewhere else
+  but findable via the PATH variable (for example using Homebrew).
+- `bin/abc`: Always change working directory to project directory:
+  Change the working directory right at he beginning, because all child
+  processes should expect that they are running with the project directory as
+  their working directory -- regardless of the directory from which the `abc`
+  tool itself was called.
+
 ## Release 2.0.2 (2026-03-12)
 
 Changes:
 
-- Enhance/update the VS Code settings in ".vscode/settings.json".
-- Require the ansible-lint "production" profile in ".ansible-lint".
+- Enhance/update the VS Code settings in `.vscode/settings.json`.
+- Require the ansible-lint "production" profile in `.ansible-lint`.
 - make distcheck: Ensure distribution archives are less than 100 KB in size.
-- `how-to-release.md`: Add the updated "uv.lock" file, too!
+- `how-to-release.md`: Add the updated `uv.lock` file, too!
 
 *Note*: The template changes only affects the ABC project itself automatically,
 and must be integrated into dependant projects manually, if desired.
