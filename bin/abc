@@ -191,7 +191,7 @@ function Stub_Init() {
 
 			collections:
 			  - name: ${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}
-			    version: ">=2.0.0"
+			    version: ">=2.2.0"
 
 			roles:
 			  []

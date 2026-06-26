@@ -28,10 +28,12 @@
 
    ```sh
    sed -i'.bak' \
+     -e "s/version: \">=.*$/version: \">=${major}.${minor}.${fix}\"/g" bin/abc
+   sed -i'.bak' \
      -e "s/^version: .*$/version: ${major}.${minor}.${fix}/g" galaxy.yml
    sed -i'.bak' \
      -e "s/^version = \".*\"$/version = \"${major}.${minor}.${fix}\"/g" pyproject.toml
-   rm -fv galaxy.yml.bak pyproject.toml.bak
+   rm -fv bin/abc.bak galaxy.yml.bak pyproject.toml.bak
    make check
    ```
 
