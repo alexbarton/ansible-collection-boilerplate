@@ -23,7 +23,7 @@ if [[ "${play}" == "--list" ]]; then
 	# List all available playbooks
 	find \
 		. \
-		playbooks{,/deploy,/site} \
+		playbooks{,/ad-hoc,/deploy,/site} \
 		ansible_galaxy/ansible_collections/*/*/playbooks \
 		-maxdepth 1 -name '*.yml' -type f 2>/dev/null \
 	| while read -r file; do
@@ -45,7 +45,7 @@ fi
 unset playbook
 for dir in \
 	. \
-	playbooks{,/deploy,/site} \
+	playbooks{,/ad-hoc,/deploy,/site} \
 	ansible_galaxy/ansible_collections/*/*/playbooks \
 ; do
 	playbook="${dir}/${play}.yml"

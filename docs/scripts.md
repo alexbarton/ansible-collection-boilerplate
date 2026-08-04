@@ -52,6 +52,7 @@ The `<playbook>` is looked for in "well known" locations with the `.yml`
 extension:
 
 - `./playbooks/`
+- `./playbooks/ad-hoc/`
 - `./playbooks/deploy/`
 - `./playbooks/site/`
 - Playbooks in installed Ansible Collections (`playbooks/` folder)
