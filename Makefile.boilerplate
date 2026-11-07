@@ -47,7 +47,12 @@ endif
 
 # Clean up, for example after upgrading the project.
 cleanup:
-	find $(SOURCE_ROOT) \( -name '*.old*' -o -name '*.new*' \) -exec rm -iv {} \;
+	find $(SOURCE_ROOT) \
+	 \( -path '$(SOURCE_ROOT)/.git' -o -path '$(SOURCE_ROOT)/.jj' \
+	   -o -path '$(SOURCE_ROOT)/.venv' \
+	   -o -path '$(SOURCE_ROOT)/ansible_galaxy' \
+	 \) -prune \
+	 -o \( -name '*.old*' -o -name '*.new*' \) -exec rm -iv {} \;
 
 .PHONY: update cleanup
 
