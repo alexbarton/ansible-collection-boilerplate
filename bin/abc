@@ -193,7 +193,7 @@ function Stub_Init() {
 
 			collections:
 			  - name: ${src}
-			    version: ">=2.2.0"
+			    version: ">=2.2.1"
 
 			roles:
 			  []
