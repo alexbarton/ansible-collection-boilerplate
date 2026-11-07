@@ -45,16 +45,17 @@ References:
 
 ### Tasks
 
-Individual _Tasks_ are stored in YAML files. Their name should start with a
-_verb_ and a _capital_ first letter: Use an action verb to indicate what the
-role does. For example: _"Install Apache"_ or _"Configure firewall"_.
+_Tasks_ are stored in YAML files, for example in the `tasks/` directory of a
+role. The name of each task should start with a _verb_ and a _capital_ first
+letter: Use an action verb to indicate what the task does. For example:
+_"Install Apache"_ or _"Configure firewall"_.
 
 There is no need to end the short task description with a period.
 
 Example:
 
 ```yaml
-- name: This is an example task
+- name: Show a greeting
   ansible.builtin.debug:
     msg: Hello World!
 ```
