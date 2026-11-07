@@ -35,21 +35,35 @@ Usage() {
 		echo
 		{
 			set +o pipefail
-			echo   "  help		Show this help text and exit."
-			echo   "  init		Initialize a new Ansible project."
-			echo   "  install	Install all dependencies of the project. [Alias: activate, i]"
-			echo   "  update	Update boilerplate code and dependencies. [Alias: upgrade, up]"
+			Usage_Line help "Show this help text and exit."
+			Usage_Line init "Initialize a new Ansible project."
+			Usage_Line install "Install all dependencies of the project. [Alias: activate, i]"
+			Usage_Line update "Update boilerplate code and dependencies. [Alias: upgrade, up]"
+			# Only list the first plugin of each name, which is the one
+			# that is called (see Get_Plugin_Files):
+			seen=" "
 			for plugin in $(Get_Plugin_Files); do
 				cmd=$(basename "${plugin}" | sed -e 's/^abc-//')
+				[[ ${seen} == *" ${cmd} "* ]] && continue
+				seen="${seen}${cmd} "
 				description=$(grep -F '# description=' "${plugin}" | cut -d= -f2-)
-				[[ ${#cmd} -lt 6 ]] && cmd="${cmd}\t"
-				printf "  ${cmd}	%s\n" "${description:-(no description found)}"
+				Usage_Line "${cmd}" "${description:-(no description found)}"
 			done
 		} | sort -u
 		echo
 		echo "Pass --help to individual sub-commands to see their help."
 		echo
 	} >&2
+}
+
+#
+# Show one command and its description in the usage information.
+#
+# $1: Command name.
+# $2: Description.
+#
+Usage_Line() {
+	printf '  %-14s%s\n' "$1" "$2"
 }
 
 #
