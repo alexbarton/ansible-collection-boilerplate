@@ -83,7 +83,7 @@ variable, see above) and initialize a new Ansible Boilerplate Collection based
 project with it:
 
 ```bash
-curl -s https://raw.githubusercontent.com/alexbarton/ansible-collection-boilerplate/refs/heads/main/bin/abc | bash -s -- init
+curl -fsSL https://raw.githubusercontent.com/alexbarton/ansible-collection-boilerplate/refs/heads/main/bin/abc | bash -s -- init
 ```
 
 This initializes an Ansible-based project with some template files, links some

@@ -51,6 +51,7 @@ ansible-playbook ./path/to/<playbook>.yml [<ansible-playbook_arguments> [...]]
 The `<playbook>` is looked for in "well known" locations with the `.yml`
 extension:
 
+- `./` (the project root directory)
 - `./playbooks/`
 - `./playbooks/deploy/`
 - `./playbooks/site/`
