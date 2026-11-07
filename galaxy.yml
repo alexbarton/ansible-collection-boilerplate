@@ -33,6 +33,7 @@ build_ignore:
   - .trunk
   - .venv
   - AGENTS.md
+  - CONTRIBUTING.md
   - dist
   - hosts.ini
   - site.yml
