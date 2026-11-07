@@ -39,6 +39,10 @@ export UV="${UV:-$(command -v uv 2>/dev/null || echo "uv")}"
 # Minimum Python version for new Python "virtual environments".
 export ABC_PYTHON_MIN="${ABC_PYTHON_MIN:-3.12}"
 
+# Python dependencies of new projects. Keep the minimum versions in sync with
+# "pyproject.toml" and "meta/runtime.yml" of the Ansible Boilerplate Collection!
+ABC_PYTHON_DEPS=('ansible-core>=2.16.18' 'ansible-lint>=26.4')
+
 # Path to the (probably not yet installed) Ansible Boilerplate Collection.
 export ABC_BASE_D="${ABC_BASE_D:-ansible_galaxy/ansible_collections/alexbarton/boilerplate}"
 
@@ -217,16 +221,14 @@ function Stub_Init() {
 		(
 			set -x
 			"${UV}" init --bare --python ">=${ABC_PYTHON_MIN}"
-			"${UV}" add --no-sync 'ansible-core>=2.18.6' 'ansible-lint>=25'
+			"${UV}" add --no-sync "${ABC_PYTHON_DEPS[@]}"
 		)
 	else
 		printf 'Creating a new Python "\e[36mrequirements.txt\e[m" file ...\n'
-		cat >requirements.txt <<-EOF
-			# Python dependencies
-
-			ansible-core>=2.18.6
-			ansible-lint>=25
-		EOF
+		{
+			printf '# Python dependencies\n\n'
+			printf '%s\n' "${ABC_PYTHON_DEPS[@]}"
+		} >requirements.txt
 	fi
 }
 
