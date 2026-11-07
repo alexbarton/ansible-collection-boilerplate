@@ -6,7 +6,7 @@
 #
 
 - name: Get Ansible host and package facts
-  hosts: '{{target|default("all")}}'
+  hosts: "{{ target | default('all') }}"
   gather_facts: false
 
   tasks:

@@ -6,7 +6,7 @@
 #
 
 - name: Ping system
-  hosts: '{{target|default("all")}}'
+  hosts: "{{ target | default('all') }}"
   gather_facts: false
 
   tasks:
