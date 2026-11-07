@@ -3,7 +3,12 @@
 #
 
 SOURCE_ROOT ?= $(CURDIR)
+ifdef VIRTUAL_ENV
+# Use the already activated virtual environment:
+VENV_D = $(VIRTUAL_ENV)
+else
 VENV_D = $(SOURCE_ROOT)/.venv
+endif
 VENV_BIN = $(VENV_D)/bin
 
 all:
