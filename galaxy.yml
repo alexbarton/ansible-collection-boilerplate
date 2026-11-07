@@ -28,9 +28,11 @@ build_ignore:
   - .DS_Store
   - .ansible
   - .cache
+  - .claude
   - .jj
   - .trunk
   - .venv
+  - AGENTS.md
   - dist
   - hosts.ini
   - site.yml
