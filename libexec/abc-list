@@ -27,11 +27,10 @@ Usage_Exit() {
 Groups() {
 	[[ $# -le 1 ]] || Usage_Exit
 
-	args=()
-	[[ $# -ge 1 ]] && args+=(-l "$1")
+	local inventory_cmd=(ansible-inventory --list)
+	[[ $# -ge 1 ]] && inventory_cmd+=(-l "$1")
 
-	ansible-inventory \
-		--list "${args[@]}" |
+	"${inventory_cmd[@]}" |
 		jq -r "keys | .[]" |
 		grep -Ev '^_meta$' |
 		sort -u
@@ -40,11 +39,10 @@ Groups() {
 Hosts() {
 	[[ $# -le 1 ]] || Usage_Exit
 
-	args=()
-	[[ $# -ge 1 ]] && args+=(-l "$1")
+	local inventory_cmd=(ansible-inventory --list)
+	[[ $# -ge 1 ]] && inventory_cmd+=(-l "$1")
 
-	ansible-inventory \
-		--list "${args[@]}" |
+	"${inventory_cmd[@]}" |
 		jq ".[].hosts" |
 		sed -Ene 's/^.*"(.*)",?/\1/p' |
 		sort -u
