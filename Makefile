@@ -9,12 +9,12 @@ include Makefile.boilerplate
 
 check: check-ansible
 	@if command -v mdl >/dev/null; then \
-	    make check-mdl; \
+	    $(MAKE) check-mdl; \
 	 else \
 	    printf '\e[1;33mWarning:\e[0m "mdl" not found, skipping Markdown tests!\n'; \
 	 fi
 	@if command -v shellcheck >/dev/null; then \
-	    make check-shellcheck; \
+	    $(MAKE) check-shellcheck; \
 	 else \
 	    printf '\e[1;33mWarning:\e[0m "shellcheck" not found, skipping shell script tests!\n'; \
 	 fi
@@ -44,7 +44,7 @@ distcheck: dist
 	mkdir -p "$(DIST_D)/check"
 	tar -C "$(DIST_D)/check" -xzf $$(find "$(DIST_D)" -name '*.tar.gz' | sort -Vr | head -n1)
 	if test -e "$(VENV_D)"; then ln -fs "$(VENV_D)" "$(DIST_D)/check/.venv"; fi
-	make -C "$(DIST_D)/check" check
+	$(MAKE) -C "$(DIST_D)/check" check
 #	Clean up ...
 	rm -fr "$(DIST_D)/check"
 
