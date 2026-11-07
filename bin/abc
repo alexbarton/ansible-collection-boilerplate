@@ -280,9 +280,9 @@ Venv_Init_Python() {
 	fi
 	(
 		set -x
-		test -e .venv/pyvenv.cfg || "${PYTHON}" -m venv .venv
-		./.venv/bin/pip install -U pip
-		./.venv/bin/pip install -r requirements.txt
+		{ test -e .venv/pyvenv.cfg || "${PYTHON}" -m venv .venv; } &&
+			./.venv/bin/pip install -U pip &&
+			./.venv/bin/pip install -r requirements.txt
 	)
 }
 
@@ -303,8 +303,8 @@ Venv_Init_UV() {
 		echo 'Found a "requirements.txt" file, installing requirements ...'
 		(
 			set -x
-			test -e .venv/pyvenv.cfg || "${UV}" venv
-			"${UV}" pip install -r requirements.txt
+			{ test -e .venv/pyvenv.cfg || "${UV}" venv; } &&
+				"${UV}" pip install -r requirements.txt
 		)
 		return $?
 	fi

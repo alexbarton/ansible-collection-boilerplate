@@ -311,9 +311,9 @@ Venv_Update_Python() {
 	fi
 	(
 		set -x
-		test -d .venv || ${PYTHON} -m venv .venv
-		./.venv/bin/pip install -U pip
-		./.venv/bin/pip install -U -r requirements.txt
+		{ test -d .venv || "${PYTHON}" -m venv .venv; } &&
+			./.venv/bin/pip install -U pip &&
+			./.venv/bin/pip install -U -r requirements.txt
 	)
 }
 
@@ -334,8 +334,8 @@ Venv_Update_UV() {
 		echo 'Found a "requirements.txt" file, upgrading requirements ...'
 		(
 			set -x
-			test -d .venv || "${UV}" venv
-			"${UV}" pip install -U -r requirements.txt
+			{ test -d .venv || "${UV}" venv; } &&
+				"${UV}" pip install -U -r requirements.txt
 		)
 		return $?
 	fi
