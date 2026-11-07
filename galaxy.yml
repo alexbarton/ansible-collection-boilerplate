@@ -16,8 +16,7 @@ tags:
   - common
   - tools
 
-dependencies:
-  "community.general": ">=6.1.0"
+dependencies: {}
 
 homepage: https://github.com/alexbarton/ansible-collection-boilerplate
 documentation: https://github.com/alexbarton/ansible-collection-boilerplate
