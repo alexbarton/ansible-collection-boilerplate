@@ -37,6 +37,12 @@
    make check
    ```
 
+   Make sure that the new version number is set in all three files:
+
+   ```sh
+   grep -Fn "${major}.${minor}.${fix}" bin/abc galaxy.yml pyproject.toml
+   ```
+
 4. Create the release commit and signed tag:
 
    ```sh
