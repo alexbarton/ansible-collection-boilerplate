@@ -186,17 +186,25 @@ function Stub_Init() {
 	# Create a initial "requirements.yml" file:
 	if [[ ! -e "requirements.yml" ]]; then
 		printf 'Creating a new "\e[36mrequirements.yml\e[m" file ...\n'
+		local src="${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}"
 		cat >requirements.yml <<-EOF
 			---
 			# Ansible dependencies
 
 			collections:
-			  - name: ${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}
+			  - name: ${src}
 			    version: ">=2.2.0"
 
 			roles:
 			  []
 		EOF
+		# A version range is only valid for collections on Ansible Galaxy:
+		# for Git sources "version" is a Git reference, and local archives
+		# and directories don't need one. So drop it for all other sources.
+		if [[ ! ${src} =~ ^[a-z0-9_]+\.[a-z0-9_]+$ ]]; then
+			grep -v '^    version:' requirements.yml >requirements.yml.tmp
+			mv requirements.yml.tmp requirements.yml
+		fi
 	fi
 
 	[[ -n ${ABC_USE_VENV:-} ]] || return 0
