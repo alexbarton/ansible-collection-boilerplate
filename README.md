@@ -48,6 +48,17 @@ The preferred way is to use the `abc` tool and have Ansible and its tools
 installed into a project-local Python "virtual environment" using the [Astral
 `uv` tool](https://docs.astral.sh/uv/).
 
+Requirements:
+
+- Bash (version 3.2 or newer, like on macOS) and the usual POSIX tools.
+- The [Astral `uv` tool](https://docs.astral.sh/uv/) (recommended), or Python
+  3.12 or newer with the "venv" module and `pip`.
+- Git, when the collection or other dependencies are installed from Git
+  repositories.
+- [`jq`](https://jqlang.org/) for the `abc list groups` and `abc list hosts`
+  commands.
+- `make`, if you want to use the Makefiles (optional).
+
 #### Location of the Ansible Boilerplate Collection codebase
 
 By default, the commands here in this `README.md` file as well as the scripts
@@ -185,76 +196,20 @@ make update
 
 ## Upgrading from Ansible Boilerplate Collection version 1
 
-The most prominent change is the renaming of the helper tool from the old
-`bin/ansible-boilerplate` to the new `bin/abc` name.
+The helper tool was renamed from `bin/ansible-boilerplate` to `bin/abc` in
+version 2, and the Makefiles changed, too. If you see errors like "No such file
+or directory" for one of these files after updating, see the
+`docs/upgrading.md` file (see "Further Documentation" below).
 
-Most probably your local setup was not pinned to version 1 and automatically
-updated to version 2, and now you see an error message like this:
+## Further Documentation
 
-```text
-Copying "boilerplate" script into bin/ directory ...
-cp: ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/ansible-boilerplate:
-  No such file or directory
-```
+You can find more documentation in the `docs/` directory of the repository,
+<https://github.com/alexbarton/ansible-collection-boilerplate/tree/main/docs>:
 
-... or this:
-
-```text
-ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate:
-  No such file or directory
-make: *** No rule to make target
-  `ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate'.
-  Stop.
-```
-
-... or this:
-
-```text
-/bin/sh: /my/project_basedir/bin/abc: No such file or directory
-```
-
-*Don't worry!*
-
-Either use your version control system to revert to the last known good commit
-and pin the dependency on the Ansible Boilerplate Collection in the
-`requirements.yml` file to version 1 (note the ",v1" at the end of the URL):
-
-```yml
-collections:
-  - git@github.com:alexbarton/ansible-collection-boilerplate.git,v1
-```
-
-Or (even better?) *upgrade* your project to the current version 2 of the
-Ansible Boilerplate Collection by running the new `abc` command directly from
-its source in the `ansible_galaxy/` folder once to (re-) install the project:
-
-```bash
-./ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/abc install
-```
-
-Next, check all the new versions of template files and compare them with the
-existing variants in your project, and incorporate relevant changes into the
-configuration files used in your project:
-
-```bash
-find . -name '*.new'
-```
-
-You can show the differences of all of them with this command, for example:
-
-```bash
-for new_file in $(find . -name '*.new'); do \
-    diff -u ${new_file%%.new} ${new_file} | LESS= less; \
-done
-```
-
-### Makefiles
-
-If you use the Makefile system, make sure to update how the `Makefile` of the
-Ansible Boilerplate Collection is included.
-
-You can check the required configuration with the following command:
-
-```bash
-bin/abc generate makefile
-```
+- `ansible-best-practices.md`: Some recommendations for Ansible projects.
+- `ansible-vault.md`: How to use Ansible Vault in your project.
+- `makefiles.md`: The `make` targets.
+- `playbooks.md`: The playbooks included in this collection.
+- `scripts.md`: The `abc` tool, its subcommands and plugins, and the `a`, `ap`
+  and `aps` wrapper scripts.
+- `upgrading.md`: How to upgrade from version 1 of this collection.
