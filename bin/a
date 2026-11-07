@@ -16,5 +16,5 @@ if [[ -r .venv/bin/activate ]]; then
 fi
 
 # Run ansible(1):
-set -x
+[[ -t 1 ]] && set -x
 exec ansible "$@"
