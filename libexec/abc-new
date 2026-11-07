@@ -25,17 +25,17 @@ Usage_Exit() {
 Role() {
 	[[ $# -eq 1 ]] || Usage_Exit
 
+	# Validate role name ...
+	if [[ ! $1 =~ ^[[:lower:]][[:lower:][:digit:]_]*$ ]]; then
+		echo "Role name \"$1\" violates naming scheme! Aborting." >&2
+		exit 1
+	fi
+
 	local roles_d
 	[[ -d "roles" ]] && roles_d="roles/$1" || roles_d="./$1"
 
 	if [[ -e ${roles_d} ]]; then
 		echo "Role \"$1\" already exists in \"${roles_d}\"! Aborting." >&2
-		exit 1
-	fi
-
-	# Validate role name ...
-	if [[ ! $1 =~ ^[[:lower:]][[:lower:][:digit:]_]*$ ]]; then
-		echo "Role name \"$1\" violates naming scheme! Aborting." >&2
 		exit 1
 	fi
 
