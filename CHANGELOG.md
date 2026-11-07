@@ -9,6 +9,65 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.3.0 (unreleased)
+
+Breaking changes:
+
+- `galaxy.yml`: Drop the unused dependency on the "community.general"
+  collection. Projects which use modules or plugins of "community.general"
+  themselves must list this collection in their own `requirements.yml` file
+  now!
+- `ansible.cfg`: Don't ask for the "become" password and don't show the
+  differences of changed files on each run by default: pass `-K` and `--diff`
+  to `ansible-playbook` (or `bin/ap`) when needed, or change the settings in
+  the `ansible.cfg` file of your project as described in the new comments.
+
+New features:
+
+- `abc integrate`: New command to integrate the upstream changes of template
+  files that `abc update` saved as `<file>.new`: list the affected files, show
+  the differences, or merge them interactively using a configurable merge tool
+  (`--tool`, `ABC_MERGETOOL`, the `merge.tool` Git setting, or `vimdiff`).
+  `abc update` points to it when changes are pending.
+- `bin/ap`: Look for playbooks in the `playbooks/ad-hoc/` directory, too.
+- `abc update`: Update the `abc` tool and the links to the wrapper scripts in
+  the project, too, and really update already installed roles.
+- `bin/abc`: Don't pin new Python projects to the version of the system Python
+  interpreter, which is too old on macOS, for example. Require Python 3.12 or
+  newer instead (configurable with `ABC_PYTHON_MIN`); `uv` downloads a suitable
+  Python version when required.
+
+Fixes:
+
+- `Makefile.boilerplate`: Use an activated Python virtual environment, instead
+  of calling `abc install` again on each `make` run.
+- `bin/abc`: Don't change the working directory to "/" when piped to
+  `/bin/bash` instead of `bash`.
+- `bin/abc`, `abc update`: Stop setting up the Python virtual environment on
+  the first error.
+
+Other changes:
+
+- `bin/a`: Only trace the command when running on a terminal, like `bin/ap`.
+- `abc new role`: Use 2.16 as `min_ansible_version`, like the collection.
+- `.yamllint.yml`: Ignore all `*_vars/*/ansible_vault.yml` files, like
+  `.ansible-lint` does.
+- `ansible.cfg`: Use the name `.ansible-vault-secret` for the vault password
+  file in the example, which is ignored by the `.gitignore` template.
+- `bin/abc`: Use the minimum versions of "ansible-core" and "ansible-lint" of
+  the collection itself for new projects (2.16.18 and 26.4).
+- `ansible.cfg`: Use a short hash for the SSH ControlPath, so that long host
+  names don't result in socket paths that are too long.
+- `abc help`: List plugins with the same name only once, and align all lines.
+- `abc new role`: Validate the role name first.
+- `make cleanup`: Skip the `.git`, `.jj`, `.venv` and `ansible_galaxy`
+  directories.
+- Documentation: Document all `abc` subcommands, environment variables and
+  plugins, the `make` targets, and the requirements. List the documentation
+  files in the `README.md` file, move the upgrade information for version 1 to
+  `docs/upgrading.md`, and fix the task example in
+  `docs/ansible-best-practices.md`.
+
 ## Release 2.2.2 (2026-11-07)
 
 Fixes:
