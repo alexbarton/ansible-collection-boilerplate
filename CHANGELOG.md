@@ -9,6 +9,14 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.2.2 (2026-11-07)
+
+Fixes:
+
+- `uv.lock`: Update all dependencies, which makes the virtual environment of
+  the collection work with Python 3.15: "rpds-py" failed to build and the old
+  version of "ansible-core" failed to run on Python 3.15.
+
 ## Release 2.2.1 (2026-11-07)
 
 Fixes:
