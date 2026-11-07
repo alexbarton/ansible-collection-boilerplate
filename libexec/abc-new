@@ -6,6 +6,9 @@
 
 set -euo pipefail
 
+# LOGNAME is not always set, for example in containers:
+LOGNAME="${LOGNAME:-$(id -un)}"
+
 #
 # Show usage information on stderr.
 #
