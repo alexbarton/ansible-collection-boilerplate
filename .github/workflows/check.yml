@@ -1,0 +1,68 @@
+---
+# GitHub Actions workflow: Run all checks of the Ansible Boilerplate Collection
+# and test initializing a new project with it, on Linux and on macOS.
+
+name: Check
+
+"on":
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install mdl and shellcheck (Linux only)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          sudo gem install mdl
+
+      - name: Use the Bash 3.2 shipped with macOS
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "${RUNNER_TEMP}/bash32"
+          ln -s /bin/bash "${RUNNER_TEMP}/bash32/bash"
+          echo "${RUNNER_TEMP}/bash32" >>"${GITHUB_PATH}"
+
+      - name: Run all checks and test the distribution archive
+        run: make distcheck
+
+      - name: Initialize a new project from this source tree
+        env:
+          BOILERPLATE_COLLECTION_SRC: ${{ github.workspace }}
+        run: |
+          bash --version | head -n1
+          mkdir -p "${RUNNER_TEMP}/project/.venv"
+          cd "${RUNNER_TEMP}/project"
+          "${GITHUB_WORKSPACE}/bin/abc" init
+
+      - name: Use the new project
+        working-directory: ${{ runner.temp }}/project
+        env:
+          ANSIBLE_BECOME: "false"
+          ANSIBLE_BECOME_ASK_PASS: "false"
+        run: |
+          ./bin/abc list plays
+          ./bin/abc list hosts
+          ./bin/ap ping --connection=local
+          ./bin/abc update
