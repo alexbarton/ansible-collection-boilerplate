@@ -114,6 +114,7 @@ Stub_Init_Install() {
 	else
 		echo 'Using the existing Ansible installation ...'
 	fi
+	[[ -z ${ABC_USE_VENV:-} ]] || Detect_Venv_Manager
 
 	# Are we initializing a new project?
 	[[ $1 == "init" ]] && Stub_Init
@@ -219,6 +220,21 @@ function Stub_Init() {
 }
 
 #
+# Detect which Python "virtual environment manager" to use, when not already
+# set: the "uv" tool, when available, the Python "venv" module otherwise.
+#
+Detect_Venv_Manager() {
+	[[ -n ${ABC_VENV_MANAGER:-} ]] && return 0
+	if "${UV}" --help &>/dev/null; then
+		# "uv" was detected.
+		export ABC_VENV_MANAGER="UV"
+	else
+		# Fall back to the Python "venv" module and "pip":
+		export ABC_VENV_MANAGER="Python"
+	fi
+}
+
+#
 # Create a Python "virtual environment" with the Python 3.x "venv" module.
 #
 # shellcheck disable=SC2329
@@ -279,17 +295,8 @@ if ! "${ANSIBLE_GALAXY}" --version &>/dev/null; then
 	export ABC_USE_VENV=1
 fi
 
-if [[ -n ${ABC_USE_VENV:-} ]]; then
-	# We are using a Python Venv. But which Venv manager is available?
-	if "${UV}" --help &>/dev/null; then
-		# "uv" was detected.
-		export ABC_VENV_MANAGER="UV"
-	else
-		# Fall back to the Python "venv" module and "pip":
-		export ABC_VENV_MANAGER="Python"
-	fi
-
-fi
+# We are using a Python Venv? But which Venv manager is available?
+[[ -z ${ABC_USE_VENV:-} ]] || Detect_Venv_Manager
 
 # Debug mode:
 if [[ ${1-} == "--debug" ]]; then
@@ -315,6 +322,8 @@ case "${1-}" in
 		# This fragment is called in the Ansible Boilerplate
 		# Collection itself. But in this case, we only need to
 		# initialize the Python virtual environment:
+		export ABC_USE_VENV=1
+		Detect_Venv_Manager
 		"Venv_Init_${ABC_VENV_MANAGER}"
 		exit 0
 	elif [[ $# -eq 1 ]]; then
