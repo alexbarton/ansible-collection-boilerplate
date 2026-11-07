@@ -56,7 +56,7 @@ Role() {
 		  description: ...
 		  license: MIT
 
-		  min_ansible_version: "2.17"
+		  min_ansible_version: "2.16"
 
 		  platforms:
 		    - name: Debian
