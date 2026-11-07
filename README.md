@@ -31,7 +31,7 @@ below for upgrade information!
   module with traditional `pip`, as well as the more modern and faster [Astral
   `uv` tool](https://docs.astral.sh/uv/).
 
-- Provide Makefile's and handy `make` targets for working with your project.
+- Provide Makefiles and handy `make` targets for working with your project.
   But this is purely optional, you can use this collection without `make`
   perfectly fine using the included `abc` script directly.
 
@@ -107,7 +107,7 @@ git commit -m "Initial commit"
 
 ### Alternate approach using system-wide installed `ansible-galaxy` command
 
-When Ansible, including `ansible-galaxy`, and a appropriate Python version is
+When Ansible, including `ansible-galaxy`, and an appropriate Python version is
 already installed on the local system, for example using the package manager of
 the operating system distribution, the Ansible Boilerplate Collection can be
 installed like this:
@@ -185,7 +185,7 @@ The most prominent change is the renaming of the helper tool from the old
 Most probably your local setup was not pinned to version 1 and automatically
 updated to version 2, and now you see an error message like this:
 
-```bash
+```text
 Copying "boilerplate" script into bin/ directory ...
 cp: ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/ansible-boilerplate:
   No such file or directory
@@ -193,7 +193,7 @@ cp: ansible_galaxy/ansible_collections/alexbarton/boilerplate/bin/ansible-boiler
 
 ... or this:
 
-```bash
+```text
 ansible_galaxy/ansible_collections/alexbarton/boilerplate/Makefile.boilerplate:
   No such file or directory
 make: *** No rule to make target
@@ -203,7 +203,7 @@ make: *** No rule to make target
 
 ... or this:
 
-```bash
+```text
 /bin/sh: /my/project_basedir/bin/abc: No such file or directory
 ```
 
@@ -242,7 +242,7 @@ for new_file in $(find . -name '*.new'); do \
 done
 ```
 
-### Makefile's
+### Makefiles
 
 If you use the Makefile system, make sure to update how the `Makefile` of the
 Ansible Boilerplate Collection is included.

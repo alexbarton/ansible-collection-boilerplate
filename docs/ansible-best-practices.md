@@ -17,7 +17,7 @@ naming conventions relevant for its type.
 
 ### Playbooks
 
-_Playbooks_ are stored in YAML files on the file file system. Their names must
+_Playbooks_ are stored in YAML files on the file system. Their names must
 consist of lowercase word characters only (i.e., the characters a-z and the
 digits 0-9) and use _snake_case_ style (i.e., using underscores as word
 delimiters). The file extension is `.yml`.
@@ -27,7 +27,7 @@ including the "site playbook" `site.yml`, in a subdirectory named `playbooks`.
 
 ### Roles and Collections
 
-_Role_ and _Collection_ are stored in directories on the file system
+_Roles_ and _Collections_ are stored in directories on the file system
 corresponding to their names. Their names must consist of lowercase word
 characters only (i.e., the characters a-z and the digits 0-9) and use
 _snake_case_ style (i.e., using underscores as word delimiters). The first
@@ -100,7 +100,7 @@ grep -r -A 5 -h tags roles/*/tasks \
        - apt
      ansible.builtin.meta: flush_handlers
 
-   - name: Install a example package
+   - name: Install an example package
      tags:
        - apt
        - packages

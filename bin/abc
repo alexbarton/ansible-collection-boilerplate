@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Ansible Boilerplate Collection:
-# Stub script for inclusion into dependant projects.
+# Stub script for inclusion into dependent projects.
 #
 # This script detects (and installs, if required) the real "backend script" in
 # an installed Ansible Galaxy hierarchy and delegates all commands to it.
@@ -135,7 +135,7 @@ Stub_Init_Install() {
 		# Now we should have a working `ansible-galaxy` command.
 		if [[ ! -x ${ANSIBLE_GALAXY} ]]; then
 			printf 'A Python "virtual environment" was initialized, but the "\e[36mansible-galaxy\e[m"\n' >&2
-			printf 'command seems not be be available in it!\n' >&2
+			printf 'command seems not to be available in it!\n' >&2
 			printf 'Did you probably forget to include "ansible-core" (or "ansible") in your\n' >&2
 			printf 'Python dependencies, like a "\e[36mrequirements.txt\e[m" file?\n' >&2
 			return 1
@@ -183,7 +183,7 @@ function Stub_Init() {
 		EOF
 	fi
 
-	# Create a initial "requirements.yml" file:
+	# Create an initial "requirements.yml" file:
 	if [[ ! -e "requirements.yml" ]]; then
 		printf 'Creating a new "\e[36mrequirements.yml\e[m" file ...\n'
 		local src="${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}"

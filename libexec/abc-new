@@ -96,7 +96,7 @@ Role() {
 
 		## Author Information
 	EOF
-	printf "\nCopyright (C)%s %s <%s>.\n" \
+	printf "\nCopyright (C) %s %s <%s>.\n" \
 		"$(date +%Y || true)" "${NAME:-${LOGNAME}}" "${EMAIL:-${LOGNAME}@...}" \
 		>>"${roles_d}/README.md"
 

@@ -2,7 +2,7 @@
 #
 # Ansible Boilerplate Collection:
 # Backend script which implements most functionality. Not to be included in
-# dependant projects! It is automatically called by the "stub script".
+# dependent projects! It is automatically called by the "stub script".
 #
 
 set -eu -o pipefail
@@ -181,7 +181,7 @@ Backend_Init() {
 }
 
 #
-# Crate the project Makefile
+# Create the project Makefile
 #
 Create_Makefile() {
 	"${ABC_BASE_D}/libexec/abc-generate" makefile
@@ -206,7 +206,7 @@ Update() {
 		printf '\e[33mWarning:\e[m No "\e[36mrequirements.yml\e[m" file found! Not updating Ansible Galaxy collections and roles!\n'
 	fi
 
-	# Update files included in the Boilerplate Connection first:
+	# Update files included in the Boilerplate Collection first:
 	Update_ABC
 
 	# Update Python Venv
