@@ -6,7 +6,7 @@ Just use the regular `ansible.cfg` file to configure all required Ansible Vault
 related settings, for example like this:
 
 ```ini
-[default]
+[defaults]
 vault_password_file = .ansible-vault-secret
 ```
 

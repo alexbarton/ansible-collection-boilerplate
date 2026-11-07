@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Ansible Boilerplate Collection:
-# Stub script for inclusion into dependant projects.
+# Stub script for inclusion into dependent projects.
 #
 # This script detects (and installs, if required) the real "backend script" in
 # an installed Ansible Galaxy hierarchy and delegates all commands to it.
@@ -114,6 +114,7 @@ Stub_Init_Install() {
 	else
 		echo 'Using the existing Ansible installation ...'
 	fi
+	[[ -z ${ABC_USE_VENV:-} ]] || Detect_Venv_Manager
 
 	# Are we initializing a new project?
 	[[ $1 == "init" ]] && Stub_Init
@@ -134,7 +135,7 @@ Stub_Init_Install() {
 		# Now we should have a working `ansible-galaxy` command.
 		if [[ ! -x ${ANSIBLE_GALAXY} ]]; then
 			printf 'A Python "virtual environment" was initialized, but the "\e[36mansible-galaxy\e[m"\n' >&2
-			printf 'command seems not be be available in it!\n' >&2
+			printf 'command seems not to be available in it!\n' >&2
 			printf 'Did you probably forget to include "ansible-core" (or "ansible") in your\n' >&2
 			printf 'Python dependencies, like a "\e[36mrequirements.txt\e[m" file?\n' >&2
 			return 1
@@ -182,20 +183,28 @@ function Stub_Init() {
 		EOF
 	fi
 
-	# Create a initial "requirements.yml" file:
+	# Create an initial "requirements.yml" file:
 	if [[ ! -e "requirements.yml" ]]; then
 		printf 'Creating a new "\e[36mrequirements.yml\e[m" file ...\n'
+		local src="${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}"
 		cat >requirements.yml <<-EOF
 			---
 			# Ansible dependencies
 
 			collections:
-			  - name: ${BOILERPLATE_COLLECTION_SRC:-alexbarton.boilerplate}
-			    version: ">=2.2.0"
+			  - name: ${src}
+			    version: ">=2.2.2"
 
 			roles:
 			  []
 		EOF
+		# A version range is only valid for collections on Ansible Galaxy:
+		# for Git sources "version" is a Git reference, and local archives
+		# and directories don't need one. So drop it for all other sources.
+		if [[ ! ${src} =~ ^[a-z0-9_]+\.[a-z0-9_]+$ ]]; then
+			grep -v '^    version:' requirements.yml >requirements.yml.tmp
+			mv requirements.yml.tmp requirements.yml
+		fi
 	fi
 
 	[[ -n ${ABC_USE_VENV:-} ]] || return 0
@@ -215,6 +224,21 @@ function Stub_Init() {
 			ansible-core>=2.18.6
 			ansible-lint>=25
 		EOF
+	fi
+}
+
+#
+# Detect which Python "virtual environment manager" to use, when not already
+# set: the "uv" tool, when available, the Python "venv" module otherwise.
+#
+Detect_Venv_Manager() {
+	[[ -n ${ABC_VENV_MANAGER:-} ]] && return 0
+	if "${UV}" --help &>/dev/null; then
+		# "uv" was detected.
+		export ABC_VENV_MANAGER="UV"
+	else
+		# Fall back to the Python "venv" module and "pip":
+		export ABC_VENV_MANAGER="Python"
 	fi
 }
 
@@ -279,17 +303,8 @@ if ! "${ANSIBLE_GALAXY}" --version &>/dev/null; then
 	export ABC_USE_VENV=1
 fi
 
-if [[ -n ${ABC_USE_VENV:-} ]]; then
-	# We are using a Python Venv. But which Venv manager is available?
-	if "${UV}" --help &>/dev/null; then
-		# "uv" was detected.
-		export ABC_VENV_MANAGER="UV"
-	else
-		# Fall back to the Python "venv" module and "pip":
-		export ABC_VENV_MANAGER="Python"
-	fi
-
-fi
+# We are using a Python Venv? But which Venv manager is available?
+[[ -z ${ABC_USE_VENV:-} ]] || Detect_Venv_Manager
 
 # Debug mode:
 if [[ ${1-} == "--debug" ]]; then
@@ -315,6 +330,8 @@ case "${1-}" in
 		# This fragment is called in the Ansible Boilerplate
 		# Collection itself. But in this case, we only need to
 		# initialize the Python virtual environment:
+		export ABC_USE_VENV=1
+		Detect_Venv_Manager
 		"Venv_Init_${ABC_VENV_MANAGER}"
 		exit 0
 	elif [[ $# -eq 1 ]]; then

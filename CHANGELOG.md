@@ -9,6 +9,39 @@ details, fixes and internal changes.
 - Releases on GitHub:
   <https://github.com/alexbarton/ansible-collection-boilerplate/releases>
 
+## Release 2.2.2 (2026-11-07)
+
+Fixes:
+
+- `uv.lock`: Update all dependencies, which makes the virtual environment of
+  the collection work with Python 3.15: "rpds-py" failed to build and the old
+  version of "ansible-core" failed to run on Python 3.15.
+
+## Release 2.2.1 (2026-11-07)
+
+Fixes:
+
+- `bin/abc`: Fix "ABC_VENV_MANAGER: unbound variable" crash when an activated
+  Python virtual environment provides `ansible-galaxy`, and when installing the
+  collection itself without an existing `.venv` directory.
+- `bin/abc`: Don't add a version range to the generated `requirements.yml` file
+  for collection sources which are not on Ansible Galaxy (Git repositories,
+  local archives and directories): for Git sources, "version" is a Git
+  reference.
+- `abc list groups|hosts`: Fix "unbound variable" error with Bash 3.2 (macOS).
+- `abc new role`, `abc generate readme`: Don't fail when `LOGNAME` is not set.
+- `bin/ap`: Sort the output of `--list`, and show usage information when no
+  playbook is given.
+- `Makefile`: Make the "distcheck" target work on macOS and without `.venv`.
+
+Other changes:
+
+- Documentation: Describe the "get_facts" playbook and the `target` variable,
+  fix the Ansible vault example, and fix lots of typos.
+- Add `AGENTS.md` and `CONTRIBUTING.md` with guidelines for contributors,
+  including AI coding agents.
+- Add a GitHub Actions workflow which runs all checks on Linux and macOS.
+
 ## Release 2.2.0 (2026-06-26)
 
 Fixes:

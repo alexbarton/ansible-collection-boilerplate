@@ -1,7 +1,7 @@
 ---
 namespace: alexbarton
 name: boilerplate
-version: 2.2.0
+version: 2.2.2
 
 authors:
   - Alexander Barton <alex@barton.de>
@@ -28,9 +28,13 @@ build_ignore:
   - .DS_Store
   - .ansible
   - .cache
+  - .claude
+  - .github
   - .jj
   - .trunk
   - .venv
+  - AGENTS.md
+  - CONTRIBUTING.md
   - dist
   - hosts.ini
   - site.yml

@@ -6,6 +6,9 @@
 
 set -euo pipefail
 
+# LOGNAME is not always set, for example in containers:
+LOGNAME="${LOGNAME:-$(id -un)}"
+
 #
 # Show usage information on stderr.
 #
@@ -96,7 +99,7 @@ Role() {
 
 		## Author Information
 	EOF
-	printf "\nCopyright (C)%s %s <%s>.\n" \
+	printf "\nCopyright (C) %s %s <%s>.\n" \
 		"$(date +%Y || true)" "${NAME:-${LOGNAME}}" "${EMAIL:-${LOGNAME}@...}" \
 		>>"${roles_d}/README.md"
 

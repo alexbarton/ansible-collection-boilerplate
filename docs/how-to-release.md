@@ -23,8 +23,8 @@
    vim CHANGELOG.md
    ```
 
-3. Update `galaxy.yml` and `pyproject.toml`, bump the version number in both
-   files accordingly, and run `make check`:
+3. Update `bin/abc`, `galaxy.yml` and `pyproject.toml`, bump the version
+   number in all of them accordingly, and run `make check`:
 
    ```sh
    sed -i'.bak' \
@@ -40,7 +40,7 @@
 4. Create the release commit and signed tag:
 
    ```sh
-   git add CHANGELOG.md galaxy.yml pyproject.toml uv.lock
+   git add CHANGELOG.md bin/abc galaxy.yml pyproject.toml uv.lock
    git diff --cached --patch-with-stat
    git commit --message "Release ${major}.${minor}.${fix}"
    git tag -m "Release ${major}.${minor}.${fix}" -s \

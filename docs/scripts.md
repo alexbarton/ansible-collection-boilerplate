@@ -2,7 +2,7 @@
 
 The Ansible Boilerplate Collection contains some scripts which are installed
 (copied) or linked (from the collection directory) into the `bin/` directory of
-the dependant project.
+the dependent project.
 
 ## Main "abc" Script
 
@@ -34,13 +34,13 @@ Usage: `./bin/a <ansible_arguments> [...]`
 
 This will call: `ansible <ansible_arguments> [...]`
 
-## "ap" Wrapper Scripts for the "ansible-playbook" Command
+## "ap" Wrapper Script for the "ansible-playbook" Command
 
 The `ap` script is a wrapper for the `ansible-playbook` command.
 
 Usage: `./bin/ap <playbook> [<ansible-playbook_arguments> [...]]`
 
-It will change the current working directly to the project directly and enable
+It will change the current working directory to the project directory and enable
 a Python "virtual environment" (if available). The script then calls the
 `ansible-playbook` command like this:
 
@@ -51,6 +51,7 @@ ansible-playbook ./path/to/<playbook>.yml [<ansible-playbook_arguments> [...]]
 The `<playbook>` is looked for in "well known" locations with the `.yml`
 extension:
 
+- `./` (the project root directory)
 - `./playbooks/`
 - `./playbooks/ad-hoc/`
 - `./playbooks/deploy/`
@@ -58,7 +59,7 @@ extension:
 - Playbooks in installed Ansible Collections (`playbooks/` folder)
 
 The file extension `.yml` itself must be left out in this "auto mode", for
-example like this: `./bim/ap get_facts`.
+example like this: `./bin/ap get_facts`.
 
 If no playbook was found that way, `<playbook>` is used verbatim and must
 contain the full file name, including (relative) *path* and *file extension*!

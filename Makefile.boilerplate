@@ -31,7 +31,7 @@ maintainer-clean: distclean
 
 ifneq ($(patsubst %..,,$(lastword $(SOURCE_ROOT))),)
 # SOURCE_ROOT does not end in "..", so looks like this Makefile fragment is
-# included in the top-level Makefile. Add some targets for dependant projects:
+# included in the top-level Makefile. Add some targets for dependent projects:
 
 update: $(SOURCE_ROOT)/bin/abc
 #	Update the project.
