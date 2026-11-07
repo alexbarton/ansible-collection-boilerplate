@@ -40,6 +40,10 @@ versions of `ansible-core` and `ansible-lint` are defined in `pyproject.toml`,
   else to `libexec/abc.backend` inside the installed collection
   (`ABC_BASE_D`, by default
   `ansible_galaxy/ansible_collections/alexbarton/boilerplate`).
+- Because `bin/abc` must be self-contained, the detection of the tools and the
+  setup of the Python virtual environment exist twice: in `bin/abc`
+  (`Venv_Init_*`) and in `libexec/abc.backend` (`Venv_Update_*`). Change both
+  places together; the comments marked "Keep in sync" point to them.
 - `libexec/abc.backend` implements the built-in commands (install, init,
   update, ...) and dispatches all other subcommands to *plugins*: executable
   `abc-<name>` files found in `./libexec`,

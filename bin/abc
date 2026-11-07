@@ -32,6 +32,7 @@ fi
 # Set some sane defaults for tools.
 # NOTE: These variables can be pre-set in the environment ("overwritten") by
 # users, if required for the local setup.
+# NOTE: Keep in sync with "libexec/abc.backend"!
 export ANSIBLE_GALAXY="${ANSIBLE_GALAXY:-$(command -v ansible-galaxy 2>/dev/null || echo "ansible-galaxy")}"
 export PYTHON="${PYTHON:-$(command -v python3 2>/dev/null || echo "python3")}"
 export UV="${UV:-$(command -v uv 2>/dev/null || echo "uv")}"
@@ -268,6 +269,8 @@ sys.exit(sys.version_info[:len(v)] < v)'
 #
 # Create a Python "virtual environment" with the Python 3.x "venv" module.
 #
+# NOTE: Keep in sync with Venv_Update_Python() in "libexec/abc.backend"!
+#
 # shellcheck disable=SC2329
 Venv_Init_Python() {
 	printf 'Initializing the Python "virtual environment" with the \e[1mPython "venv" module\e[m ...\n'
@@ -288,6 +291,8 @@ Venv_Init_Python() {
 
 #
 # Create a Python "virtual environment" with the "uv" tool.
+#
+# NOTE: Keep in sync with Venv_Update_UV() in "libexec/abc.backend"!
 #
 # shellcheck disable=SC2329
 Venv_Init_UV() {

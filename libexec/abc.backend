@@ -13,7 +13,8 @@ if [[ -r .venv/bin/activate ]]; then
 	. .venv/bin/activate
 fi
 
-# Detect commands to use:
+# Detect commands to use.
+# NOTE: Keep in sync with the stub script "bin/abc"!
 export ANSIBLE_GALAXY="${ANSIBLE_GALAXY:-$(command -v ansible-galaxy 2>/dev/null || echo "ansible-galaxy")}"
 export PYTHON="${PYTHON:-$(command -v python3 2>/dev/null || echo "python3")}"
 export UV="${UV:-$(command -v uv 2>/dev/null || echo "uv")}"
@@ -302,6 +303,8 @@ Update_Template_File() {
 #
 # Update a Python "virtual environment" with the Python 3.x "venv" module.
 #
+# NOTE: Keep in sync with Venv_Init_Python() in "bin/abc"!
+#
 # shellcheck disable=SC2329
 Venv_Update_Python() {
 	printf 'Updating the Python "virtual environment" with the \e[1mPython "venv" module\e[m ...\n'
@@ -319,6 +322,8 @@ Venv_Update_Python() {
 
 #
 # Update a Python "virtual environment" with the "uv" tool.
+#
+# NOTE: Keep in sync with Venv_Init_UV() in "bin/abc"!
 #
 # shellcheck disable=SC2329
 Venv_Update_UV() {
