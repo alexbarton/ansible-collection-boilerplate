@@ -137,6 +137,12 @@ When a Python "virtual environment" is used, the [Astral `uv`
 tool](https://docs.astral.sh/uv/) will be used when available. The Python
 "venv" module with traditional `pip` is used if it was not found.
 
+New Python "virtual environments" require Python 3.12 or newer. The `uv` tool
+downloads a suitable Python version automatically, if required. The Python
+"venv" module uses the `python3` command found in the `$PATH`, or the one set
+in the `PYTHON` environment variable, which must be recent enough. Set the
+`ABC_PYTHON_MIN` environment variable to require a different minimum version.
+
 ## Initializing ("Installing") an Existing Project
 
 When checking out an existing project, all of its Python (if any) and Ansible

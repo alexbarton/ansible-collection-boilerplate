@@ -30,11 +30,14 @@ fi
 # Initialize global environment:
 
 # Set some sane defaults for tools.
-# NOTE: These three variables can be pre-set in the environment ("overwritten")
-# by users, if required for the local setup.
+# NOTE: These variables can be pre-set in the environment ("overwritten") by
+# users, if required for the local setup.
 export ANSIBLE_GALAXY="${ANSIBLE_GALAXY:-$(command -v ansible-galaxy 2>/dev/null || echo "ansible-galaxy")}"
 export PYTHON="${PYTHON:-$(command -v python3 2>/dev/null || echo "python3")}"
 export UV="${UV:-$(command -v uv 2>/dev/null || echo "uv")}"
+
+# Minimum Python version for new Python "virtual environments".
+export ABC_PYTHON_MIN="${ABC_PYTHON_MIN:-3.12}"
 
 # Path to the (probably not yet installed) Ansible Boilerplate Collection.
 export ABC_BASE_D="${ABC_BASE_D:-ansible_galaxy/ansible_collections/alexbarton/boilerplate}"
@@ -213,7 +216,7 @@ function Stub_Init() {
 		printf 'Initializing a new Python project with the \e[1m"uv" tool\e[0m ...\n'
 		(
 			set -x
-			"${UV}" init -p "${PYTHON}" --bare
+			"${UV}" init --bare --python ">=${ABC_PYTHON_MIN}"
 			"${UV}" add --no-sync 'ansible-core>=2.18.6' 'ansible-lint>=25'
 		)
 	else
@@ -243,6 +246,24 @@ Detect_Venv_Manager() {
 }
 
 #
+# Check that the Python interpreter in PYTHON is recent enough to create a new
+# Python "virtual environment" (see ABC_PYTHON_MIN).
+#
+# shellcheck disable=SC2329
+Check_Python_Version() {
+	local check='import sys; v = tuple(int(x) for x in sys.argv[1].split("."))
+sys.exit(sys.version_info[:len(v)] < v)'
+
+	"${PYTHON}" -c "${check}" "${ABC_PYTHON_MIN}" 2>/dev/null && return 0
+
+	printf 'Oops, Python %s or newer is required, but "\e[36m%s\e[m" is too old or not working!\n' \
+		"${ABC_PYTHON_MIN}" "${PYTHON}" >&2
+	printf 'Install the "uv" tool (recommended) or a newer Python version and set the\n' >&2
+	printf '"PYTHON" environment variable to it.\n' >&2
+	return 1
+}
+
+#
 # Create a Python "virtual environment" with the Python 3.x "venv" module.
 #
 # shellcheck disable=SC2329
@@ -251,6 +272,9 @@ Venv_Init_Python() {
 	if [[ ! -r requirements.txt ]]; then
 		echo 'Oops, a Python "requirements.txt" file is required, but was not found!' >&2
 		return 1
+	fi
+	if [[ ! -e .venv/pyvenv.cfg ]]; then
+		Check_Python_Version || return 1
 	fi
 	(
 		set -x
@@ -315,7 +339,7 @@ if [[ -n ${DEBUG-} ]]; then
 	export DEBUG=1
 	# Show environment ...
 	for var in \
-		0 PWD PYTHON ANSIBLE_GALAXY UV \
+		0 PWD PYTHON ANSIBLE_GALAXY UV ABC_PYTHON_MIN \
 		ABC_BASE_D ABC_BACKEND ABC_USE_VENV ABC_VENV_MANAGER; do
 		eval 'echo " - ${var} is \"${'"${var}"':-"(unset)"}\"."'
 	done
